@@ -1,0 +1,17 @@
+cff-version: 1.2.0
+title: TomatoPromoterDesigner
+message: "If you use this software, please cite this software release and the accompanying article when available."
+type: software
+authors:
+  - family-names: Zhou
+    given-names: Jie
+license: MIT
+version: 0.1.0
+date-released: 2026-07-08
+abstract: "A package-first toolkit for motif-aware design of tissue-biased tomato promoter sequences."
+keywords:
+  - bioinformatics
+  - promoter design
+  - tomato
+  - sequence generation
+  - synthetic biology

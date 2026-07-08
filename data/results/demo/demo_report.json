@@ -1,0 +1,47 @@
+{
+  "num_rows": 6,
+  "num_input_sequences": 2,
+  "num_unique_designed_sequences": 6,
+  "target_tissues": [
+    "fruit"
+  ],
+  "canonical_length": 165,
+  "average_edit_distance": 65.1667,
+  "average_num_mutations": 74.0,
+  "min_num_mutations": 61,
+  "max_num_mutations": 85,
+  "num_qc_passed": 6,
+  "qc_pass_rate": 1.0,
+  "design_status_counts": {
+    "mpravae_decoded": 6
+  },
+  "design_status_display_counts": {
+    "MpraVAE decoded": 6
+  },
+  "best_candidate_by_sequence": [
+    {
+      "sequence_id": "tomato_promoter_1",
+      "target_tissue": "fruit",
+      "best_candidate_rank": 1,
+      "design_status": "mpravae_decoded",
+      "design_status_label": "MpraVAE decoded",
+      "passes_qc": true,
+      "num_mutations": 85,
+      "target_score": 2.3823,
+      "runner_up_score": 2.1653,
+      "target_margin": 0.217
+    },
+    {
+      "sequence_id": "tomato_promoter_2",
+      "target_tissue": "fruit",
+      "best_candidate_rank": 1,
+      "design_status": "mpravae_decoded",
+      "design_status_label": "MpraVAE decoded",
+      "passes_qc": true,
+      "num_mutations": 61,
+      "target_score": 1.5961,
+      "runner_up_score": 1.6209,
+      "target_margin": -0.0248
+    }
+  ]
+}

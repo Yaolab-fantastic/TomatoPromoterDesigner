@@ -1,0 +1,37 @@
+{
+  "version": "0.1.0",
+  "models": [
+    {
+      "name": "heuristic_expression_predictor",
+      "type": "baseline",
+      "status": "bundled",
+      "weights_path": null
+    },
+    {
+      "name": "motif_preserving_designer",
+      "type": "baseline",
+      "status": "bundled",
+      "weights_path": null
+    },
+    {
+      "name": "transvae_backend",
+      "type": "planned",
+      "status": "pending_integration",
+      "weights_path": null
+    },
+    {
+      "name": "deepseed_denselstm_scalar",
+      "type": "legacy_adapter",
+      "status": "integrated_external_checkpoint",
+      "weights_path": "../deepseed/Predictor/results/model/165_mpra_expr_denselstm.pth",
+      "notes": "Original scalar-expression predictor from the legacy deepseed codebase. Not tissue-specific."
+    },
+    {
+      "name": "mpravae_tomato_joint_predictor",
+      "type": "legacy_adapter",
+      "status": "integrated_external_checkpoint",
+      "weights_path": "../MpraVAE/code/models1/best_val_corr_model.pth",
+      "notes": "Tomato four-tissue VAE + predictor checkpoint mirrored from MpraVAE vaecnn-style training code."
+    }
+  ]
+}

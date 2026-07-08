@@ -1,0 +1,37 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "tomato-promoter-designer"
+version = "0.1.0"
+description = "Integrated motif-aware design of tissue-biased tomato promoters."
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "MIT"}
+authors = [
+  {name = "TomatoPromoterDesigner Authors"}
+]
+keywords = ["bioinformatics", "promoter", "tomato", "sequence-design", "synthetic-biology"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Science/Research",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Topic :: Scientific/Engineering :: Bio-Informatics"
+]
+dependencies = ["numpy>=1.24"]
+
+[project.optional-dependencies]
+dev = ["build>=1.2", "twine>=5.1"]
+
+[project.scripts]
+tomato-promoter-designer = "tomato_promoter_designer.cli:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]

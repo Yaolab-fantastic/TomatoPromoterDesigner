@@ -1,0 +1,16 @@
+{
+  "num_total_sequences": 10222,
+  "num_positive_sequences": 5101,
+  "num_negative_sequences": 5121,
+  "num_extracted_exact_motifs": 8096,
+  "num_merged_motif_groups": 76,
+  "num_candidate_motifs_after_windowing": 62,
+  "num_retained_motifs": 20,
+  "window_size": 24,
+  "min_len": 5,
+  "p_value_cutoff": 0.005,
+  "min_n_motif": 3,
+  "used_fallback_ranking": true,
+  "summary_path": "data/processed/dnabert_legacy/motif_summary.csv",
+  "labeled_path": "data/processed/dnabert_legacy/processed_sequences.csv"
+}
