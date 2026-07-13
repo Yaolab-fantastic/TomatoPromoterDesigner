@@ -1,51 +1,51 @@
 stage	path	source	note
-external	data/external/large_files.tsv	workspace_large_artifacts	Large raw/model artifacts intentionally not copied into git.
+external	data/external/external_resources.tsv	external_resource_manifest	Optional large raw/model artifacts intentionally not copied into git.
 processed	data/processed/dnabert_legacy/motif_summary.csv	data/raw/dnabert/dev.tsv + data/raw/dnabert/atten.npy	Processed motif ranking from migrated DNABERT adapter.
 processed	data/processed/dnabert_legacy/processed_sequences.csv	data/raw/dnabert/dev.tsv + data/raw/dnabert/atten.npy	Per-sequence processed motif annotations from migrated DNABERT adapter.
 processed	data/processed/dnabert_legacy/run_metadata.json	data/raw/dnabert/dev.tsv + data/raw/dnabert/atten.npy	Run metadata for migrated DNABERT processing.
-raw	data/raw/deepseed/scatter_165_mpra_expr_denselstm.png	../deepseed/Predictor/results1/scatter_fig/scatter_165_mpra_expr_denselstm.png	Original deepseed scatter image.
-raw	data/raw/deepseed/training_log165_mpra_expr_denselstm.csv	../deepseed/Predictor/results1/training_log165_mpra_expr_denselstm.csv	Legacy DenseLSTM training log.
-raw	data/raw/dnabert/atten.npy	../DNABERT/examples/result/6/atten.npy	DNABERT attention scores aligned with dev.tsv.
-raw	data/raw/dnabert/dev.tsv	../DNABERT/examples/sample_data/vision/dev.tsv	DNABERT evaluation sequences for attention-based motif processing.
-raw	data/raw/dnabert/tfbs_assets/TFBS_AAAGT.png	../DNABERT/motif/result/6-2/TFBS_AAAGT.png	DNABERT TFBS logo assets, primary source directory.
-raw	data/raw/dnabert/tfbs_assets/TFBS_AACTC.png	../DNABERT/motif/result/6-2/TFBS_AACTC.png	DNABERT TFBS logo assets, primary source directory.
-raw	data/raw/dnabert/tfbs_assets/TFBS_AATAT.png	../DNABERT/motif/result/6-2/TFBS_AATAT.png	DNABERT TFBS logo assets, primary source directory.
-raw	data/raw/dnabert/tfbs_assets/TFBS_ACAAT.png	../DNABERT/motif/result/6-2/TFBS_ACAAT.png	DNABERT TFBS logo assets, primary source directory.
-raw	data/raw/dnabert/tfbs_assets/TFBS_ACGTG.png	../DNABERT/motif/result/6-2/TFBS_ACGTG.png	DNABERT TFBS logo assets, primary source directory.
-raw	data/raw/dnabert/tfbs_assets/TFBS_ACTAA.png	../DNABERT/motif/result/6-2/TFBS_ACTAA.png	DNABERT TFBS logo assets, primary source directory.
-raw	data/raw/dnabert/tfbs_assets/TFBS_AGCCCA.png	../DNABERT/motif/result/6-2/TFBS_AGCCCA.png	DNABERT TFBS logo assets, primary source directory.
-raw	data/raw/dnabert/tfbs_assets/TFBS_ATAAC.png	../DNABERT/motif/result/6-2/TFBS_ATAAC.png	DNABERT TFBS logo assets, primary source directory.
-raw	data/raw/dnabert/tfbs_assets/TFBS_ATCCA.png	../DNABERT/motif/result/6-2/TFBS_ATCCA.png	DNABERT TFBS logo assets, primary source directory.
-raw	data/raw/dnabert/tfbs_assets/TFBS_ATTTT.png	../DNABERT/motif/result/6-2/TFBS_ATTTT.png	DNABERT TFBS logo assets, primary source directory.
-raw	data/raw/dnabert/tfbs_assets/TFBS_CAAAA.png	../DNABERT/motif/result/6-2/TFBS_CAAAA.png	DNABERT TFBS logo assets, primary source directory.
-raw	data/raw/dnabert/tfbs_assets/TFBS_CACAT.png	../DNABERT/motif/result/6-2/TFBS_CACAT.png	DNABERT TFBS logo assets, primary source directory.
-raw	data/raw/dnabert/tfbs_assets/TFBS_CATAC.png	../DNABERT/motif/result/6-2/TFBS_CATAC.png	DNABERT TFBS logo assets, primary source directory.
-raw	data/raw/dnabert/tfbs_assets/TFBS_CATTA.png	../DNABERT/motif/result/6-2/TFBS_CATTA.png	DNABERT TFBS logo assets, primary source directory.
-raw	data/raw/dnabert/tfbs_assets/TFBS_CCCTA.png	../DNABERT/motif/result/6-2/TFBS_CCCTA.png	DNABERT TFBS logo assets, primary source directory.
-raw	data/raw/dnabert/tfbs_assets/TFBS_CGAAT.png	../DNABERT/motif/result/6-2/TFBS_CGAAT.png	DNABERT TFBS logo assets, primary source directory.
-raw	data/raw/dnabert/tfbs_assets/TFBS_CGATA.png	../DNABERT/motif/result/6-2/TFBS_CGATA.png	DNABERT TFBS logo assets, primary source directory.
-raw	data/raw/dnabert/tfbs_assets/TFBS_CGTAA.png	../DNABERT/motif/result/6-2/TFBS_CGTAA.png	DNABERT TFBS logo assets, primary source directory.
-raw	data/raw/dnabert/tfbs_assets/TFBS_CTACC.png	../DNABERT/motif/result/6-2/TFBS_CTACC.png	DNABERT TFBS logo assets, primary source directory.
-raw	data/raw/dnabert/tfbs_assets/TFBS_CTATT.png	../DNABERT/motif/result/6-2/TFBS_CTATT.png	DNABERT TFBS logo assets, primary source directory.
-raw	data/raw/dnabert/tfbs_assets/TFBS_GTATA.png	../DNABERT/motif/result/6-2/TFBS_GTATA.png	DNABERT TFBS logo assets, primary source directory.
-raw	data/raw/dnabert/tfbs_assets/TFBS_TAATT.png	../DNABERT/motif/result/6-2/TFBS_TAATT.png	DNABERT TFBS logo assets, primary source directory.
-raw	data/raw/dnabert/tfbs_assets/TFBS_TAGTA.png	../DNABERT/motif/result/6-2/TFBS_TAGTA.png	DNABERT TFBS logo assets, primary source directory.
-raw	data/raw/dnabert/tfbs_assets/TFBS_TATCA.png	../DNABERT/motif/result/6-2/TFBS_TATCA.png	DNABERT TFBS logo assets, primary source directory.
-raw	data/raw/dnabert/tfbs_assets/TFBS_TCTTA.png	../DNABERT/motif/result/6-2/TFBS_TCTTA.png	DNABERT TFBS logo assets, primary source directory.
-raw	data/raw/dnabert/tfbs_assets/TFBS_TTAAA.png	../DNABERT/motif/result/6-2/TFBS_TTAAA.png	DNABERT TFBS logo assets, primary source directory.
-raw	data/raw/dnabert/tfbs_assets/TFBS_TTTAT.png	../DNABERT/motif/result/6-2/TFBS_TTTAT.png	DNABERT TFBS logo assets, primary source directory.
+raw	data/raw/deepseed/scatter_165_mpra_expr_denselstm.png	deepseed retained source	Original deepseed scatter image.
+raw	data/raw/deepseed/training_log165_mpra_expr_denselstm.csv	deepseed retained source	Legacy DenseLSTM training log.
+raw	data/raw/dnabert/atten.npy	DNABERT retained source	DNABERT attention scores aligned with dev.tsv.
+raw	data/raw/dnabert/dev.tsv	DNABERT retained source	DNABERT evaluation sequences for attention-based motif processing.
+raw	data/raw/dnabert/tfbs_assets/TFBS_AAAGT.png	DNABERT retained source	DNABERT TFBS logo assets, primary source directory.
+raw	data/raw/dnabert/tfbs_assets/TFBS_AACTC.png	DNABERT retained source	DNABERT TFBS logo assets, primary source directory.
+raw	data/raw/dnabert/tfbs_assets/TFBS_AATAT.png	DNABERT retained source	DNABERT TFBS logo assets, primary source directory.
+raw	data/raw/dnabert/tfbs_assets/TFBS_ACAAT.png	DNABERT retained source	DNABERT TFBS logo assets, primary source directory.
+raw	data/raw/dnabert/tfbs_assets/TFBS_ACGTG.png	DNABERT retained source	DNABERT TFBS logo assets, primary source directory.
+raw	data/raw/dnabert/tfbs_assets/TFBS_ACTAA.png	DNABERT retained source	DNABERT TFBS logo assets, primary source directory.
+raw	data/raw/dnabert/tfbs_assets/TFBS_AGCCCA.png	DNABERT retained source	DNABERT TFBS logo assets, primary source directory.
+raw	data/raw/dnabert/tfbs_assets/TFBS_ATAAC.png	DNABERT retained source	DNABERT TFBS logo assets, primary source directory.
+raw	data/raw/dnabert/tfbs_assets/TFBS_ATCCA.png	DNABERT retained source	DNABERT TFBS logo assets, primary source directory.
+raw	data/raw/dnabert/tfbs_assets/TFBS_ATTTT.png	DNABERT retained source	DNABERT TFBS logo assets, primary source directory.
+raw	data/raw/dnabert/tfbs_assets/TFBS_CAAAA.png	DNABERT retained source	DNABERT TFBS logo assets, primary source directory.
+raw	data/raw/dnabert/tfbs_assets/TFBS_CACAT.png	DNABERT retained source	DNABERT TFBS logo assets, primary source directory.
+raw	data/raw/dnabert/tfbs_assets/TFBS_CATAC.png	DNABERT retained source	DNABERT TFBS logo assets, primary source directory.
+raw	data/raw/dnabert/tfbs_assets/TFBS_CATTA.png	DNABERT retained source	DNABERT TFBS logo assets, primary source directory.
+raw	data/raw/dnabert/tfbs_assets/TFBS_CCCTA.png	DNABERT retained source	DNABERT TFBS logo assets, primary source directory.
+raw	data/raw/dnabert/tfbs_assets/TFBS_CGAAT.png	DNABERT retained source	DNABERT TFBS logo assets, primary source directory.
+raw	data/raw/dnabert/tfbs_assets/TFBS_CGATA.png	DNABERT retained source	DNABERT TFBS logo assets, primary source directory.
+raw	data/raw/dnabert/tfbs_assets/TFBS_CGTAA.png	DNABERT retained source	DNABERT TFBS logo assets, primary source directory.
+raw	data/raw/dnabert/tfbs_assets/TFBS_CTACC.png	DNABERT retained source	DNABERT TFBS logo assets, primary source directory.
+raw	data/raw/dnabert/tfbs_assets/TFBS_CTATT.png	DNABERT retained source	DNABERT TFBS logo assets, primary source directory.
+raw	data/raw/dnabert/tfbs_assets/TFBS_GTATA.png	DNABERT retained source	DNABERT TFBS logo assets, primary source directory.
+raw	data/raw/dnabert/tfbs_assets/TFBS_TAATT.png	DNABERT retained source	DNABERT TFBS logo assets, primary source directory.
+raw	data/raw/dnabert/tfbs_assets/TFBS_TAGTA.png	DNABERT retained source	DNABERT TFBS logo assets, primary source directory.
+raw	data/raw/dnabert/tfbs_assets/TFBS_TATCA.png	DNABERT retained source	DNABERT TFBS logo assets, primary source directory.
+raw	data/raw/dnabert/tfbs_assets/TFBS_TCTTA.png	DNABERT retained source	DNABERT TFBS logo assets, primary source directory.
+raw	data/raw/dnabert/tfbs_assets/TFBS_TTAAA.png	DNABERT retained source	DNABERT TFBS logo assets, primary source directory.
+raw	data/raw/dnabert/tfbs_assets/TFBS_TTTAT.png	DNABERT retained source	DNABERT TFBS logo assets, primary source directory.
 raw	data/raw/mpravae/blast/blast_evalue_hist_stacked.png	data/raw/mpravae/blast_result.txt + data/raw/mpravae/sequences_with_id.csv	Curated English-only rebuild of legacy BLAST histogram figure.
 raw	data/raw/mpravae/blast/blast_evalue_hist_stacked2.png	data/raw/mpravae/blast_result.txt + data/raw/mpravae/sequences_with_id.csv	Curated English-only rebuild of legacy BLAST histogram figure.
-raw	data/raw/mpravae/blast_result.txt	../MpraVAE/data/blast_result.txt	Raw BLAST tabular results used to rebuild legacy histogram figures.
-raw	data/raw/mpravae/designed_promoters.csv	../MpraVAE/results/designed_promoters.csv	Legacy designed promoter table used for k-mer and semantic-space views.
-raw	data/raw/mpravae/diversity/edit_distance_diversity.png	../MpraVAE/results/bianjijuli/edit_distance_diversity.png	Legacy diversity PNG assets.
-raw	data/raw/mpravae/diversity/edit_distance_diversity1.png	../MpraVAE/results/bianjijuli/edit_distance_diversity1.png	Legacy diversity PNG assets.
-raw	data/raw/mpravae/generated_prediction_results.csv	../MpraVAE/results/generated_prediction_results.csv	Legacy prediction verification table.
-raw	data/raw/mpravae/loss_history.csv	../MpraVAE/code/transformerresult/results1/loss_curves/loss_history.csv	Legacy training-loss table used for paper figure reconstruction.
-raw	data/raw/mpravae/mutated_file.csv	../MpraVAE/data/bianjijuli/mutated_file.csv	Edited promoter pairs used for diversity analysis.
-raw	data/raw/mpravae/random_promoters_200.csv	../MpraVAE/data/random_promoters_200.csv	Random promoter background for diversity analysis.
-raw	data/raw/mpravae/sequences_with_id.csv	../MpraVAE/data/sequences_with_id.csv	Sequence identifiers used to map BLAST hits back to sequence groups.
-raw	data/raw/mpravae/training_set.csv	../MpraVAE/data/vaedata/training_set.csv	Tomato promoter training set used as natural-sequence reference.
+raw	data/raw/mpravae/blast_result.txt	MpraVAE retained source	Raw BLAST tabular results used to rebuild legacy histogram figures.
+raw	data/raw/mpravae/designed_promoters.csv	MpraVAE retained source	Legacy designed promoter table used for k-mer and semantic-space views.
+raw	data/raw/mpravae/diversity/edit_distance_diversity.png	MpraVAE retained source	Legacy diversity PNG assets.
+raw	data/raw/mpravae/diversity/edit_distance_diversity1.png	MpraVAE retained source	Legacy diversity PNG assets.
+raw	data/raw/mpravae/generated_prediction_results.csv	MpraVAE retained source	Legacy prediction verification table.
+raw	data/raw/mpravae/loss_history.csv	MpraVAE retained source	Legacy training-loss table used for paper figure reconstruction.
+raw	data/raw/mpravae/mutated_file.csv	MpraVAE retained source	Edited promoter pairs used for diversity analysis.
+raw	data/raw/mpravae/random_promoters_200.csv	MpraVAE retained source	Random promoter background for diversity analysis.
+raw	data/raw/mpravae/sequences_with_id.csv	MpraVAE retained source	Sequence identifiers used to map BLAST hits back to sequence groups.
+raw	data/raw/mpravae/training_set.csv	MpraVAE retained source	Tomato promoter training set used as natural-sequence reference.
 results	data/results/demo/demo_annotate.csv	generated_from_examples	Deterministic demo motif annotation output.
 results	data/results/demo/demo_design.csv	generated_from_examples	Deterministic demo design output.
 results	data/results/demo/demo_predict.csv	generated_from_examples	Deterministic demo prediction output.

@@ -82,7 +82,7 @@ def build_parser() -> argparse.ArgumentParser:
     design.add_argument("--input", required=True, help="Input FASTA file.")
     design.add_argument("--target", required=True, choices=["root", "stem", "leaf", "fruit"])
     design.add_argument("--candidates", type=int, default=5, help="Number of ranked candidates to emit per input sequence.")
-    design.add_argument("--seed", type=int, default=20260708, help="Random seed for deterministic design.")
+    design.add_argument("--seed", type=int, default=42, help="Random seed for deterministic design.")
     design.add_argument("--output", required=True, help="Output CSV path.")
 
     design_mpravae = subparsers.add_parser(
@@ -92,7 +92,7 @@ def build_parser() -> argparse.ArgumentParser:
     design_mpravae.add_argument("--input", required=True, help="Input FASTA file.")
     design_mpravae.add_argument("--target", required=True, choices=["root", "stem", "leaf", "fruit"])
     design_mpravae.add_argument("--candidates", type=int, default=5)
-    design_mpravae.add_argument("--seed", type=int, default=20260708)
+    design_mpravae.add_argument("--seed", type=int, default=42)
     design_mpravae.add_argument("--output", required=True, help="Output CSV path.")
     design_mpravae.add_argument("--checkpoint", required=False, help="Optional path to an MpraVAE tomato checkpoint.")
 

@@ -1,6 +1,6 @@
 PYTHON ?= python
 
-.PHONY: install install-dev test demo validate package legacy-figures sync-data clean
+.PHONY: install install-dev test demo validate package legacy-figures reproduce-legacy sync-data clean
 
 install:
 	$(PYTHON) -m pip install -e .
@@ -19,6 +19,9 @@ demo:
 
 legacy-figures:
 	PYTHONPATH=src $(PYTHON) -m tomato_promoter_designer.cli legacy-figures --output-dir outputs/legacy_figures_bundle
+
+reproduce-legacy:
+	PYTHONPATH=src $(PYTHON) scripts/reproduce_legacy_outputs.py
 
 sync-data:
 	PYTHONPATH=src $(PYTHON) scripts/sync_repository_data.py

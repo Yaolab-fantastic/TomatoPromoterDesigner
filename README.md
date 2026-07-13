@@ -1,81 +1,19 @@
 # TomatoPromoterDesigner
 
-`TomatoPromoterDesigner` is a unified Python toolkit for motif-aware design and evaluation of tissue-biased tomato promoters.
+TomatoPromoterDesigner is a Python command-line framework for motif-aware analysis, tissue-associated prediction and candidate design of tomato promoters.
 
-The repository is designed to consolidate three currently separate research threads:
+It provides a unified workflow for:
 
-- transformer-based promoter generation from `MpraVAE`
-- motif annotation inspired by `DNABERT`
-- conditional sequence design and scoring logic adapted from `deepseed`
+- validating promoter FASTA inputs
+- annotating tomato promoter motifs
+- predicting root, stem, leaf and fruit-associated scores
+- generating motif-aware candidate promoter sequences
+- exporting reports and figure-ready result summaries
+- reproducing retained manuscript-facing result resources
 
-The repository now also carries a curated `data/` layer so the small raw inputs, processed tables, and paper-facing figure bundles needed for reproduction can live alongside the codebase.
-
-This repository now combines a stable package structure with staged migration of earlier research models, so the command-line workflows can use real adapted components where the workspace provides compatible checkpoints.
-
-## What is already here
-
-- installable Python package layout
-- a single CLI entry point
-- FASTA and CSV I/O helpers
-- schema validation for promoter sequences
-- a deterministic motif annotation module
-- a deterministic baseline expression predictor with legacy-derived prediction adapters
-- a design pipeline that preserves annotated motifs and mutates flanking sequence
-- report generation in JSON and CSV
-- publication-style SVG figure export from prediction, design, and motif-summary tables
-- repository documentation, examples, and tests
-- legacy-derived adapters for `deepseed`, `DNABERT` post-processing, and tomato `MpraVAE`
-- a repaired `MpraVAE` design route that emits novel sequences, uses deterministic posterior-mean scoring, and applies tomato-data-informed QC
-
-## Current release boundaries
-
-The current repository does **not** yet redistribute every final trained `TransVAE`, `DNABERT`, or `preGAN` weight file. The public package therefore keeps some replaceable baseline components while exposing legacy-derived routes where validated checkpoints are available.
-
-That gives us three practical benefits:
-
-1. a package that can already be installed and exercised
-2. stable CLI and file formats for downstream paper writing
-3. a controlled path to swap in final public models without breaking the software interface
-
-## Repository layout
-
-```text
-TomatoPromoterDesigner/
-├── pyproject.toml
-├── README.md
-├── LICENSE
-├── data/
-├── src/tomato_promoter_designer/
-├── docs/
-├── examples/
-├── models/
-├── outputs/
-├── scripts/
-├── tests/
-└── app/optional_web_demo/
-```
-
-Directory roles:
-
-- `src/`
-  - installable package code and CLI implementation
-- `data/`
-  - bundled small raw inputs, processed tables, canonical demo results, and paper-facing figure assets intended to ship with the repository
-- `outputs/`
-  - local runtime workspace for user-generated command outputs during testing or exploration
-  - intentionally ignored from normal git history
-- `docs/`
-  - manuscript-supporting software, data, and reproducibility documentation
-- `models/`
-  - model weight manifest and packaging-facing model metadata
-- `scripts/`
-  - repository maintenance utilities such as data synchronization
-- `tests/`
-  - unit and regression tests
+TomatoPromoterDesigner is a software framework, not a newly trained promoter deep learning model. The repository contains package-native deterministic modules, documented legacy-derived adapters and retained result tables used for the accompanying Application Note.
 
 ## Installation
-
-Create a virtual environment and install in editable mode:
 
 ```bash
 python -m venv .venv
@@ -83,246 +21,219 @@ source .venv/bin/activate
 pip install -e .
 ```
 
-## Quick start
-
-Use the example FASTA in `examples/demo_input.fasta`.
-
-Annotate motifs:
+For development:
 
 ```bash
+pip install -e ".[dev]"
+make test
+```
+
+## Quick Start
+
+Run the bundled example workflow:
+
+```bash
+mkdir -p outputs
+
+tomato-promoter-designer validate-input \
+  --input examples/demo_input.fasta
+
 tomato-promoter-designer annotate \
   --input examples/demo_input.fasta \
-  --output outputs/annotate.csv
-```
+  --output outputs/demo_annotate.csv
 
-Predict tissue-biased expression scores:
-
-```bash
 tomato-promoter-designer predict \
   --input examples/demo_input.fasta \
-  --output outputs/predict.csv
-```
+  --output outputs/demo_predict.csv
 
-Design fruit-biased candidates while preserving motif regions:
-
-```bash
 tomato-promoter-designer design \
   --input examples/demo_input.fasta \
   --target fruit \
-  --candidates 5 \
-  --output outputs/design.csv
-```
+  --candidates 3 \
+  --seed 42 \
+  --output outputs/demo_design.csv
 
-Build a compact report:
-
-```bash
 tomato-promoter-designer report \
-  --input outputs/design.csv \
-  --output outputs/report.json
+  --input outputs/demo_design.csv \
+  --output outputs/demo_report.json
 ```
 
-The report JSON includes mutation and QC summaries together with a per-sequence best-candidate overview that is convenient for supplementary materials.
-
-Export manuscript-ready SVG figures:
+Or run the same demo with:
 
 ```bash
-tomato-promoter-designer figures \
-  --input outputs/design.csv \
-  --output-dir outputs/design_figures
-```
-
-Export legacy result figures reconstructed from the original deepseed and MpraVAE outputs:
-
-```bash
-tomato-promoter-designer legacy-figures \
-  --output-dir outputs/legacy_figures
-```
-
-Refresh the repository-bundled data layout:
-
-```bash
-make sync-data
-```
-
-## Current command set
-
-- `annotate`: scan promoter sequences for configured motif hits
-- `annotate-legacy-dnabert`: run the migrated DNABERT attention-to-motif post-processing workflow
-- `predict`: auto-prefer the real tomato `MpraVAE` predictor for canonical 165 bp A/C/G/T inputs, otherwise fall back to the baseline scorer
-- `predict-legacy-mpravae`: run the migrated MpraVAE tomato four-tissue predictor
-- `predict-legacy-deepseed`: call the migrated `deepseed` DenseLSTM scalar predictor
-  - `predict-legacy` remains accepted as a backward-compatible alias
-- `design`: auto-prefer the real `MpraVAE` latent-space designer for canonical tomato inputs, otherwise fall back to the baseline motif-preserving designer
-- `design-legacy-mpravae`: run the migrated MpraVAE latent-space design workflow
-- `report`: summarize a design result table
-- `figures`: export lightweight SVG figures from result CSV tables
-- `legacy-figures`: batch-export legacy paper-style figures from migrated deepseed and MpraVAE result files
-  - includes reconstructed loss curves, prediction scatter, diversity comparison, and semantic sequence space
-- `validate-input`: validate a FASTA file against repository sequence rules
-
-## Terminology
-
-- `baseline`
-  - deterministic package-native logic shipped directly inside this repository and used as the default fallback when no compatible migrated checkpoint route is available
-- `legacy-derived`
-  - functionality adapted from earlier `MpraVAE`, `DNABERT`, or `deepseed` research code and exposed through the unified package
-- `legacy figures`
-  - manuscript-facing reconstructions or bundled assets derived from earlier result tables, logs, or figure resources
-- `adapter`
-  - a wrapper that keeps upstream model behavior accessible through the repository's stable package interfaces
-
-## Data contract
-
-Input FASTA sequences are expected to be:
-
-- uppercase or lowercase DNA-like strings
-- composed of `A`, `C`, `G`, `T`, optionally `N` and `M`
-- ideally length `165` for the current tomato workflow
-
-The software accepts other lengths for development and inspection, but emits warnings through the report layer when sequences diverge from the canonical training length.
-
-## Data layout
-
-- `data/raw/`
-  - curated small raw tables and figure assets copied from the legacy workspaces
-- `data/processed/`
-  - intermediate outputs from migrated workflows such as DNABERT motif post-processing
-- `data/results/`
-  - demo outputs, modern figure exports, and the reconstructed legacy figure bundle
-- `data/external/`
-  - manifest of large upstream artifacts intentionally kept outside standard git history
-
-The canonical repository-bundled artifacts live under `data/`. By contrast, `outputs/` is a disposable local working directory for ad hoc CLI runs such as quick tests, notebooks, or temporary figure export checks.
-
-The detailed bundled-data description lives in `docs/data_inventory.md`, and the machine-readable provenance table is `data/inventory.tsv`.
-
-For field-by-field guidance to the bundled demonstration outputs, see `data/results/demo/README.md`.
-
-## Model status and extension points
-
-The package is organized so model upgrades stay local and controlled:
-
-- `models/expression_predictor.py`
-  - replace `HeuristicExpressionPredictor` with trained predictor weights
-- `legacy/mpravae_tomato.py`
-  - now wraps the earlier tomato multi-tissue VAE + predictor checkpoint and latent-space design loop
-- `legacy/deepseed_expression.py`
-  - already wraps the original `deepseed` scalar-expression checkpoint for staged migration
-- `models/motif_annotator.py`
-  - replace or augment motif scanning with DNABERT attention-based annotations
-- `legacy/dnabert_motif.py`
-  - now contains a dependency-light migration of the DNABERT motif post-processing path
-- `models/generator.py`
-  - replace `MotifPreservingDesigner` with the final design backend
-- `pipeline/design.py`
-  - expose whichever integrated route is selected for the paper
-
-## Legacy research mapping
-
-| Legacy source | Future home |
-| --- | --- |
-| `MpraVAE/code/TransVAE.py` | `src/tomato_promoter_designer/models/transvae.py` |
-| `MpraVAE/code/transformervae.py` | `src/tomato_promoter_designer/pipeline/design.py` |
-| `DNABERT/motif/find_motifs.py` | `src/tomato_promoter_designer/models/motif_annotator.py` |
-| `deepseed/Predictor/*` | `src/tomato_promoter_designer/models/expression_predictor.py` |
-| `deepseed/Generatorme/preGAN_expr.py` | `src/tomato_promoter_designer/models/generator.py` |
-
-## Testing
-
-Run the unit tests from the repository root:
-
-```bash
-PYTHONPATH=src python -m unittest discover -s tests
-```
-
-Or use the bundled developer targets:
-
-```bash
-make install-dev
-make test
 make demo
 ```
 
-To exercise the first real legacy-derived model adapter:
+## Inputs
 
-```bash
-PYTHONPATH=src python -m tomato_promoter_designer.cli predict-legacy-deepseed \
-  --input examples/demo_input.fasta \
-  --output outputs/deepseed_legacy_predict.csv
+The main input is a FASTA file containing one or more promoter sequences. Multi-sequence FASTA files are supported.
+
+Single-sequence example:
+
+```fasta
+>promoter_1
+ATGCAAAATTTATCG...
 ```
 
-To exercise the migrated MpraVAE tomato predictor:
+Multi-sequence example:
 
-```bash
-PYTHONPATH=src python -m tomato_promoter_designer.cli predict-legacy-mpravae \
-  --input examples/demo_input.fasta \
-  --output outputs/mpravae_predict.csv
+```fasta
+>promoter_1
+ATGCAAAATTTATCG...
+>promoter_2
+TTTATCAAAAGGCTA...
+>promoter_3
+CTATTGGGCAAAATA...
 ```
 
-To exercise the migrated MpraVAE latent-space design route:
+Validation rules:
+
+- sequence identifiers must be unique
+- empty records are rejected
+- sequences are normalized to uppercase
+- supported symbols are `A`, `C`, `G`, `T`, `N` and `M`
+
+The package-native workflow can process validated promoter sequences of different lengths. MpraVAE-derived adapter routes require 165-bp unambiguous `A/C/G/T` sequences because that is the retained model input shape.
+
+## Choosing A Target Tissue
+
+The `design` command uses `--target` to define the desired tissue-associated design objective:
 
 ```bash
-PYTHONPATH=src python -m tomato_promoter_designer.cli design-legacy-mpravae \
-  --input examples/demo_input.fasta \
+--target root
+--target stem
+--target leaf
+--target fruit
+```
+
+For example, fruit-targeted design:
+
+```bash
+tomato-promoter-designer design \
+  --input my_promoters.fasta \
   --target fruit \
-  --candidates 3 \
-  --output outputs/mpravae_design.csv
+  --candidates 5 \
+  --seed 42 \
+  --output outputs/fruit_design.csv
 ```
 
-The current `design-legacy-mpravae` workflow now:
+If the input FASTA contains 100 promoters and `--candidates 5` is used, the design table can contain up to 500 candidate rows. Candidates are ranked separately for each input promoter.
 
-- optimizes latent codes toward a target tissue
-- samples or decodes candidate promoter sequences from the legacy VAE decoder
-- re-scores designed sequences with deterministic posterior-mean prediction
-- applies tomato-training-data-informed QC instead of an overly strict generic promoter rule
-- minimally reverts low-confidence edits only when QC repair is needed
+## Outputs And How To Use Them
 
-To exercise the migrated DNABERT motif post-processing route with the legacy example files:
+`annotate` writes a motif table:
+
+| Field | Meaning |
+| --- | --- |
+| `sequence_id` | Input promoter identifier |
+| `motif` | Detected motif sequence |
+| `start`, `end` | Zero-based motif coordinates |
+| `score` | Match score, equal to motif length for exact matching |
+
+`predict` writes a four-tissue prediction table:
+
+| Field | Meaning |
+| --- | --- |
+| `sequence_id` | Input promoter identifier |
+| `sequence` | Normalized promoter sequence |
+| `expr_root`, `expr_stem`, `expr_leaf`, `expr_fruit` | Tissue-associated prediction scores |
+| `preferred_tissue` | Tissue with the highest score |
+
+`design` writes a candidate table:
+
+| Field | Meaning |
+| --- | --- |
+| `original_sequence` | Input promoter sequence |
+| `designed_sequence` | Designed candidate promoter sequence |
+| `target_tissue` | Requested target tissue |
+| `candidate_rank` | Rank within candidates for the same input promoter |
+| `expr_root`, `expr_stem`, `expr_leaf`, `expr_fruit` | Candidate prediction scores |
+| `preserved_motifs` | Motifs protected by the package-native design route |
+| `num_mutations` | Number of point differences from the input sequence |
+| `passes_qc` | Quality-control flag when available |
+
+Typical use of the design output:
+
+1. Select candidates with high target-tissue score.
+2. Prefer candidates with a clear target-tissue margin over non-target tissues.
+3. Check that important motifs are preserved.
+4. Avoid candidates with unnecessarily high mutation burden.
+5. Use the selected `designed_sequence` entries for downstream manual review or experimental validation.
+
+The software prioritizes promoter candidates computationally. Final promoter activity should be validated experimentally.
+
+## Reproduce Manuscript Resources
+
+The small demo verifies installation and command behavior. Manuscript and supplementary figures are based on retained result tables.
+
+Regenerate the retained manuscript-facing result pack:
 
 ```bash
-PYTHONPATH=src python -m tomato_promoter_designer.cli annotate-legacy-dnabert \
-  --dev-tsv ../DNABERT/examples/sample_data/vision/dev.tsv \
-  --atten-npy ../DNABERT/examples/result/6/atten.npy \
-  --output-dir outputs/dnabert_legacy
+make reproduce-legacy
 ```
 
-The migrated DNABERT adapter reports whether strict significance filtering retained any motifs. If not, it transparently falls back to a ranked candidate summary so the output remains inspectable without overstating statistical confidence.
+Outputs are written to:
 
-## Repository standards
+```text
+data/results/reproducible_legacy/
+```
 
-- package code lives under `src/tomato_promoter_designer/`
-- frozen or release-ready model files will be tracked through `models/weights_manifest.json`
-- paper-facing method and reproducibility notes live under `docs/`
-- future demo UI stays isolated in `app/optional_web_demo/` so the package remains the primary artifact
+## Main Commands
 
-## Citation and contribution
+| Command | Purpose |
+| --- | --- |
+| `validate-input` | Validate FASTA records and sequence symbols |
+| `annotate` | Scan promoter sequences for configured motif hits |
+| `predict` | Generate root, stem, leaf and fruit-associated scores |
+| `design` | Generate motif-aware candidate promoters |
+| `report` | Build a compact JSON design summary |
+| `figures` | Export lightweight figures from result CSV files |
+| `legacy-figures` | Reconstruct retained legacy-derived figure bundles |
+| `annotate-legacy-dnabert` | Run retained DNABERT-derived motif post-processing |
+| `predict-legacy-mpravae` | Run MpraVAE-derived prediction when compatible resources are available |
+| `design-legacy-mpravae` | Run MpraVAE-derived design when compatible resources are available |
+| `predict-legacy-deepseed` | Run deepseed-derived scalar prediction when compatible resources are available |
 
-- software citation metadata: `CITATION.cff`
-- contribution workflow: `CONTRIBUTING.md`
-- legacy code migration map: `docs/legacy_mapping.md`
-- release preparation checklist: `docs/release_checklist.md`
+## Repository Layout
 
-## Submission-oriented notes
+```text
+TomatoPromoterDesigner/
+├── src/tomato_promoter_designer/   # package source and CLI
+├── examples/                       # runnable FASTA examples
+├── data/                           # curated data and retained result resources
+├── docs/                           # tool documentation and manuscript sources
+├── models/                         # model/checkpoint manifests
+├── scripts/                        # data and result reproduction scripts
+├── tests/                          # unit and regression tests
+└── outputs/                        # local scratch outputs
+```
 
-This repository is intentionally arranged to support `Bioinformatics Application Note` submission requirements:
+## Documentation
 
-- stable software name
-- single command-line entry point
-- documented install path
-- clear availability section targets
-- explicit examples and test data
-- a clean route to versioned release and DOI archiving
+Detailed tool documentation:
 
-The current journal-facing requirement snapshot is summarized in `docs/bioinformatics_application_note.md` and should be rechecked against the official journal guidance at submission time.
+```text
+docs/tool_documentation.md
+```
 
-The paper-facing roadmap lives in:
+Manuscript sources:
 
-- `docs/methods.md`
-- `docs/reproducibility.md`
-- `models/README.md`
-- `docs/figure_inventory.md`
-- `docs/data_inventory.md`
-- `docs/data_provenance.md`
-- `docs/bioinformatics_application_note.md`
-- `docs/application_note_text_blocks.md`
-- `docs/supplementary_materials_outline.md`
+```text
+docs/application_note_submission.tex
+docs/application_note_supplement.tex
+docs/application_note_references.bib
+```
+
+## Data And Model Boundary
+
+Package-native commands run after installation. Legacy-derived routes may require compatible retained support files or checkpoints. Large checkpoints, genomes, HDF5 corpora and BLAST databases are tracked through manifests rather than bundled into normal git history.
+
+See `docs/tool_documentation.md` for data, model and reproduction details.
+
+## Citation
+
+Citation metadata is provided in `CITATION.cff`. Please cite the Application Note and repository release when using TomatoPromoterDesigner.
+
+## License
+
+The package code is released under the license declared in `LICENSE` and `pyproject.toml`. Some retained data resources and legacy-derived assets have separate provenance or redistribution constraints documented in the repository data manifests.

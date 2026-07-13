@@ -64,6 +64,13 @@ def _prefer_existing(*paths: Path) -> Path:
     return paths[0]
 
 
+def _provided_or_default(provided: str | Path | None, default: Path) -> Path:
+    if provided is None:
+        return default
+    path = Path(provided)
+    return path if path.exists() else default
+
+
 def _polyline(values: list[float], x0: float, y0: float, width: float, height: float) -> str:
     if not values:
         return ""
@@ -565,7 +572,7 @@ def export_legacy_figure_bundle(
 
     manifest: dict[str, object] = {"output_dir": str(output_dir), "generated": []}
 
-    loss_path = Path(mpravae_loss_history or DEFAULT_MPRAVAE_LOSS)
+    loss_path = _provided_or_default(mpravae_loss_history, DEFAULT_MPRAVAE_LOSS)
     if loss_path.exists():
         rows = _read_csv(loss_path)
         file_path = output_dir / "mpravae_loss_dashboard.svg"
@@ -574,7 +581,7 @@ def export_legacy_figure_bundle(
         assert isinstance(cast, list)
         cast.append(file_path.name)
 
-    designed_path = Path(mpravae_designed_promoters or DEFAULT_MPRAVAE_DESIGNED)
+    designed_path = _provided_or_default(mpravae_designed_promoters, DEFAULT_MPRAVAE_DESIGNED)
     if designed_path.exists():
         rows = _read_csv(designed_path)
         file_path = output_dir / "mpravae_kmer_scatter.svg"
@@ -583,7 +590,7 @@ def export_legacy_figure_bundle(
         assert isinstance(cast, list)
         cast.append(file_path.name)
 
-        training_path = Path(mpravae_training_set or DEFAULT_MPRAVAE_TRAINING_SET)
+        training_path = _provided_or_default(mpravae_training_set, DEFAULT_MPRAVAE_TRAINING_SET)
         training_rows = _read_csv(training_path) if training_path.exists() else []
         if training_rows or any(row.get("orig_sequence") for row in rows):
             semantic_path = output_dir / "mpravae_semantic_space.svg"
@@ -592,7 +599,7 @@ def export_legacy_figure_bundle(
             assert isinstance(cast, list)
             cast.append(semantic_path.name)
 
-    prediction_path = Path(mpravae_prediction_results or DEFAULT_MPRAVAE_PRED)
+    prediction_path = _provided_or_default(mpravae_prediction_results, DEFAULT_MPRAVAE_PRED)
     if prediction_path.exists():
         rows = _read_csv(prediction_path)
         file_path = output_dir / "mpravae_prediction_scatter.svg"
@@ -601,7 +608,7 @@ def export_legacy_figure_bundle(
         assert isinstance(cast, list)
         cast.append(file_path.name)
 
-    deepseed_path = Path(deepseed_training_log or DEFAULT_DEEPSEED_TRAIN)
+    deepseed_path = _provided_or_default(deepseed_training_log, DEFAULT_DEEPSEED_TRAIN)
     if deepseed_path.exists():
         rows = _read_csv(deepseed_path)
         file_path = output_dir / "deepseed_training_curve.svg"
@@ -610,8 +617,8 @@ def export_legacy_figure_bundle(
         assert isinstance(cast, list)
         cast.append(file_path.name)
 
-    mutated_path = Path(mpravae_mutated_file or DEFAULT_MPRAVAE_MUTATED)
-    random_path = Path(mpravae_random_promoters or DEFAULT_MPRAVAE_RANDOM)
+    mutated_path = _provided_or_default(mpravae_mutated_file, DEFAULT_MPRAVAE_MUTATED)
+    random_path = _provided_or_default(mpravae_random_promoters, DEFAULT_MPRAVAE_RANDOM)
     if mutated_path.exists() and random_path.exists():
         mutated_rows = _read_csv(mutated_path)
         random_rows = _read_csv(random_path)
@@ -621,8 +628,11 @@ def export_legacy_figure_bundle(
         assert isinstance(cast, list)
         cast.append(file_path.name)
 
-    motif_summary_path = Path(dnabert_motif_summary or DEFAULT_DNABERT_MOTIF_SUMMARY)
-    tfbs_dirs = [Path(dnabert_tfbs_dir)] if dnabert_tfbs_dir else DEFAULT_DNABERT_TFBS_DIRS
+    motif_summary_path = _provided_or_default(dnabert_motif_summary, DEFAULT_DNABERT_MOTIF_SUMMARY)
+    if dnabert_tfbs_dir and Path(dnabert_tfbs_dir).exists():
+        tfbs_dirs = [Path(dnabert_tfbs_dir)]
+    else:
+        tfbs_dirs = DEFAULT_DNABERT_TFBS_DIRS
     if motif_summary_path.exists():
         motif_rows = _read_csv(motif_summary_path)
         motif_output_dir = output_dir / "dnabert_tfbs_assets"
@@ -643,7 +653,7 @@ def export_legacy_figure_bundle(
             assert isinstance(cast, list)
             cast.extend(copied)
 
-    deepseed_scatter_path = Path(deepseed_scatter_png or DEFAULT_DEEPSEED_SCATTER)
+    deepseed_scatter_path = _provided_or_default(deepseed_scatter_png, DEFAULT_DEEPSEED_SCATTER)
     if deepseed_scatter_path.exists():
         destination = output_dir / deepseed_scatter_path.name
         shutil.copy2(deepseed_scatter_path, destination)
@@ -651,7 +661,10 @@ def export_legacy_figure_bundle(
         assert isinstance(cast, list)
         cast.append(destination.name)
 
-    for source_dir in [Path(mpravae_blast_dir or DEFAULT_MPRAVAE_BLAST_DIR), Path(mpravae_diversity_dir or DEFAULT_MPRAVAE_DIVERSITY_DIR)]:
+    for source_dir in [
+        _provided_or_default(mpravae_blast_dir, DEFAULT_MPRAVAE_BLAST_DIR),
+        _provided_or_default(mpravae_diversity_dir, DEFAULT_MPRAVAE_DIVERSITY_DIR),
+    ]:
         if source_dir.exists():
             asset_output_dir = output_dir / source_dir.name
             asset_output_dir.mkdir(parents=True, exist_ok=True)

@@ -283,7 +283,7 @@ class MpraVAETomatoAdapter:
         records: list[SequenceRecord],
         target_tissue: str,
         candidates: int = 5,
-        seed: int = 20260708,
+        seed: int = 42,
         steps: int = 400,
         learning_rate: float = 0.05,
         gamma: float = 0.05,

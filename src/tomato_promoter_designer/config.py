@@ -19,5 +19,4 @@ class AppConfig:
     canonical_length: int = 165
     motifs: list[str] = field(default_factory=lambda: list(DEFAULT_MOTIFS))
     target_tissues: tuple[str, ...] = TISSUE_CHOICES
-    random_seed: int = 20260708
-
+    random_seed: int = 42

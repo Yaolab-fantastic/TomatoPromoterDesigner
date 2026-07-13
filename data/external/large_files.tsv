@@ -1,9 +1,0 @@
-path	size_bytes	size_mb	note
-../MpraVAE/data/GCF_000188115.4_SL3.0_genomic.fna	839136125	800.26	reference genome FASTA, large raw input
-../MpraVAE/mpravae_synthetic_sequences.h5	343545248	327.63	synthetic sequence HDF5, large generated corpus
-../MpraVAE/code/mpravae_synthetic_sequences.h5	343545248	327.63	duplicate synthetic sequence HDF5 retained by legacy code
-../MpraVAE/data/tomato_db.nsq	207365799	197.76	BLAST database shard, large auxiliary binary
-../DNABERT/examples/ft/6/pytorch_model.bin	356820075	340.29	fine-tuned DNABERT checkpoint
-../DNABERT/6-new-12w-0.zip	333494115	318.04	packaged DNABERT model archive
-../MpraVAE/model/MpraVAE1.pth	50208726	47.88	legacy MpraVAE checkpoint
-../MpraVAE/code/transformerresult/models1/best_val_corr_model.pth	15191274	14.49	legacy tomato predictor checkpoint

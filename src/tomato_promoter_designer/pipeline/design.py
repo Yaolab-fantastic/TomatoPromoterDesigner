@@ -21,7 +21,7 @@ def run_design(
     if _supports_legacy_mpravae(records):
         try:
             designer = MpraVAETomatoAdapter()
-            return designer.design(records, target_tissue=target_tissue, candidates=candidates, seed=seed or 20260708)
+            return designer.design(records, target_tissue=target_tissue, candidates=candidates, seed=seed or 42)
         except (FileNotFoundError, RuntimeError, ValueError):
             pass
     designer = MotifPreservingDesigner()

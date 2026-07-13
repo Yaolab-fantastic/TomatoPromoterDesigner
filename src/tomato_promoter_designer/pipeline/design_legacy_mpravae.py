@@ -11,7 +11,7 @@ def run_legacy_mpravae_design(
     target_tissue: str,
     checkpoint_path: str | Path | None = None,
     candidates: int = 5,
-    seed: int = 20260708,
+    seed: int = 42,
 ) -> list[DesignResult]:
     designer = MpraVAETomatoAdapter(checkpoint_path=checkpoint_path)
     return designer.design(records, target_tissue=target_tissue, candidates=candidates, seed=seed)

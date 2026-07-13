@@ -41,6 +41,20 @@ RAW_FILE_SPECS = [
         "note": "Legacy designed promoter table used for k-mer and semantic-space views.",
     },
     {
+        "source": WORKSPACE_ROOT / "MpraVAE" / "results" / "designed_promoters200.csv",
+        "target": Path("data/raw/mpravae/designed_promoters200.csv"),
+        "stage": "raw",
+        "origin": "MpraVAE",
+        "note": "Retained 200-promoter design table used for supplementary k-mer and design-summary reproduction.",
+    },
+    {
+        "source": WORKSPACE_ROOT / "MpraVAE" / "data" / "bianjijuli" / "designed_promoters200.csv",
+        "target": Path("data/raw/mpravae/designed_promoters200_pairs.csv"),
+        "stage": "raw",
+        "origin": "MpraVAE",
+        "note": "Paired original/generated promoter table used for edit-distance reproduction.",
+    },
+    {
         "source": WORKSPACE_ROOT / "MpraVAE" / "results" / "generated_prediction_results.csv",
         "target": Path("data/raw/mpravae/generated_prediction_results.csv"),
         "stage": "raw",
@@ -139,15 +153,49 @@ RAW_DIR_SPECS = [
     },
 ]
 
-LARGE_EXTERNAL_SPECS = [
-    ("MpraVAE/data/GCF_000188115.4_SL3.0_genomic.fna", "reference genome FASTA, large raw input"),
-    ("MpraVAE/mpravae_synthetic_sequences.h5", "synthetic sequence HDF5, large generated corpus"),
-    ("MpraVAE/code/mpravae_synthetic_sequences.h5", "duplicate synthetic sequence HDF5 retained by legacy code"),
-    ("MpraVAE/data/tomato_db.nsq", "BLAST database shard, large auxiliary binary"),
-    ("DNABERT/examples/ft/6/pytorch_model.bin", "fine-tuned DNABERT checkpoint"),
-    ("DNABERT/6-new-12w-0.zip", "packaged DNABERT model archive"),
-    ("MpraVAE/model/MpraVAE1.pth", "legacy MpraVAE checkpoint"),
-    ("MpraVAE/code/transformerresult/models1/best_val_corr_model.pth", "legacy tomato predictor checkpoint"),
+EXTERNAL_RESOURCE_SPECS = [
+    {
+        "resource": "Tomato reference genome",
+        "required_for": "optional promoter extraction and upstream sequence reconstruction",
+        "bundled": "no",
+        "default_location": "external/tomato_reference_genome.fna",
+        "availability_note": "Distribute separately through release assets, Zenodo, or institutional storage if required.",
+    },
+    {
+        "resource": "Synthetic promoter HDF5 corpus",
+        "required_for": "legacy MpraVAE corpus inspection",
+        "bundled": "no",
+        "default_location": "external/mpravae_synthetic_sequences.h5",
+        "availability_note": "Not required for package-native annotate, predict, design, or report commands.",
+    },
+    {
+        "resource": "BLAST database shards",
+        "required_for": "legacy generated-sequence similarity checks",
+        "bundled": "no",
+        "default_location": "external/blast_database/",
+        "availability_note": "Not required for normal tool use; retain only for optional legacy-quality assessment.",
+    },
+    {
+        "resource": "DNABERT fine-tuned checkpoint",
+        "required_for": "DNABERT-derived motif post-processing",
+        "bundled": "no",
+        "default_location": "external/dnabert_checkpoint/",
+        "availability_note": "Use only when rerunning the original DNABERT-derived route.",
+    },
+    {
+        "resource": "MpraVAE checkpoint",
+        "required_for": "MpraVAE-derived prediction and latent-space design",
+        "bundled": "no",
+        "default_location": "external/mpravae_checkpoint/",
+        "availability_note": "Package-native prediction and design remain runnable without this checkpoint.",
+    },
+    {
+        "resource": "Tomato predictor checkpoint",
+        "required_for": "retained four-tissue prediction adapter",
+        "bundled": "no",
+        "default_location": "external/tomato_predictor_checkpoint/",
+        "availability_note": "Needed only for checkpoint-dependent adapter reproduction.",
+    },
 ]
 
 
@@ -210,7 +258,7 @@ def sync_raw_and_processed_data() -> list[dict[str, str]]:
         if not source.exists():
             continue
         _copy_file(source, destination)
-        _record_inventory(inventory, spec["stage"], _rel(destination), _display_path(source), spec["note"])
+        _record_inventory(inventory, spec["stage"], _rel(destination), f"{spec['origin']} retained source", spec["note"])
 
     tfbs_seen: set[str] = set()
     for spec in RAW_DIR_SPECS:
@@ -226,7 +274,7 @@ def sync_raw_and_processed_data() -> list[dict[str, str]]:
             shutil.copy2(source_path, destination)
             if "tfbs_assets" in str(target_dir):
                 tfbs_seen.add(destination.name)
-            _record_inventory(inventory, spec["stage"], _rel(destination), _display_path(source_path), spec["note"])
+            _record_inventory(inventory, spec["stage"], _rel(destination), f"{spec['origin']} retained source", spec["note"])
 
     blast_sequence_ids = REPO_ROOT / "data" / "raw" / "mpravae" / "sequences_with_id.csv"
     blast_results = REPO_ROOT / "data" / "raw" / "mpravae" / "blast_result.txt"
@@ -241,7 +289,7 @@ def sync_raw_and_processed_data() -> list[dict[str, str]]:
                 inventory,
                 "raw",
                 _rel(path),
-                f"{_display_path(blast_results)} + {_display_path(blast_sequence_ids)}",
+                "data/raw/mpravae/blast_result.txt + data/raw/mpravae/sequences_with_id.csv",
                 "Curated English-only rebuild of legacy BLAST histogram figure.",
             )
 
@@ -264,7 +312,7 @@ def sync_raw_and_processed_data() -> list[dict[str, str]]:
             inventory,
             "processed",
             _rel(path),
-            f"{_display_path(Path('data/raw/dnabert/dev.tsv'))} + {_display_path(Path('data/raw/dnabert/atten.npy'))}",
+            "data/raw/dnabert/dev.tsv + data/raw/dnabert/atten.npy",
             note,
         )
     return inventory
@@ -292,7 +340,7 @@ def generate_demo_results() -> list[dict[str, str]]:
     write_dict_rows(predict_rows, predict_path)
     _record_inventory(inventory, "results", _rel(predict_path), "generated_from_examples", "Deterministic demo prediction output.")
 
-    design_rows = [item.to_dict() for item in run_design(records, target_tissue="fruit", candidates=3, seed=20260708)]
+    design_rows = [item.to_dict() for item in run_design(records, target_tissue="fruit", candidates=3, seed=42)]
     design_path = demo_dir / "demo_design.csv"
     write_dict_rows(design_rows, design_path)
     _record_inventory(inventory, "results", _rel(design_path), "generated_from_examples", "Deterministic demo design output.")
@@ -353,26 +401,20 @@ def generate_repository_figures() -> list[dict[str, str]]:
 
 def write_external_manifest() -> list[dict[str, str]]:
     inventory: list[dict[str, str]] = []
-    target = REPO_ROOT / "data" / "external" / "large_files.tsv"
+    target = REPO_ROOT / "data" / "external" / "external_resources.tsv"
     target.parent.mkdir(parents=True, exist_ok=True)
-    rows: list[dict[str, str]] = []
-    for rel_path, note in LARGE_EXTERNAL_SPECS:
-        source = WORKSPACE_ROOT / rel_path
-        if not source.exists():
-            continue
-        rows.append(
-            {
-                "path": _display_path(source),
-                "size_bytes": str(source.stat().st_size),
-                "size_mb": f"{source.stat().st_size / (1024 * 1024):.2f}",
-                "note": note,
-            }
-        )
     with target.open("w", encoding="utf-8", newline="") as handle:
-        writer = csv.DictWriter(handle, fieldnames=["path", "size_bytes", "size_mb", "note"], delimiter="\t")
+        fieldnames = ["resource", "required_for", "bundled", "default_location", "availability_note"]
+        writer = csv.DictWriter(handle, fieldnames=fieldnames, delimiter="\t")
         writer.writeheader()
-        writer.writerows(rows)
-    _record_inventory(inventory, "external", _rel(target), "workspace_large_artifacts", "Large raw/model artifacts intentionally not copied into git.")
+        writer.writerows(EXTERNAL_RESOURCE_SPECS)
+    _record_inventory(
+        inventory,
+        "external",
+        _rel(target),
+        "external_resource_manifest",
+        "Optional large raw/model artifacts intentionally not copied into git.",
+    )
     return inventory
 
 

@@ -1,0 +1,98 @@
+\documentclass[numsec,webpdf,modern,large,numbered]{oup-authoring-template}
+
+\graphicspath{{Fig/}}
+
+\usepackage{orcidlink}
+\usepackage{hyperref}
+\hypersetup{hidelinks}
+
+\begin{document}
+
+\journaltitle{Bioinformatics}
+\DOI{DOI added during production}
+\copyrightyear{YEAR}
+\pubyear{YEAR}
+\vol{XX}
+\issue{x}
+\access{Published: Date added during production}
+\appnotes{Application Note}
+
+\title[TomatoPromoterDesigner]{TomatoPromoterDesigner: a reproducible framework for motif-aware analysis and design of tissue-biased tomato promoters}
+
+\author[1,2,3]{Zhoujie Fan}
+\author[1,2]{Haimeng Zhang}
+\author[1,2]{Xiaoyu Wang}
+\author[1]{Hao Meng}
+\author[1,3]{Hong Liang}
+\author[4,5]{Zheng Wang}
+\author[6]{Huazhu Fu\ORCID{0000-0002-9702-5524}}
+\author[7]{Ching-Yu Cheng}
+\author[1,2,3,8,*]{Shan Cong\ORCID{0000-0002-5981-7678}}
+\author[1,2,3,7,*]{Xiaohui Yao\ORCID{0000-0002-8530-7989}}
+
+\address[1]{\orgdiv{College of Intelligent Systems Science and Engineering}, \orgname{Harbin Engineering University}, \orgaddress{\street{Harbin}, \postcode{150001}, \country{China}}}
+\address[2]{\orgdiv{Qingdao Innovation and Development Center}, \orgname{Harbin Engineering University}, \orgaddress{\street{Qingdao}, \postcode{266000}, \country{China}}}
+\address[3]{\orgname{Sanya Nanhai Innovation and Development Base of Harbin Engineering University}, \orgaddress{\street{Sanya}, \postcode{572024}, \country{China}}}
+\address[4]{\orgdiv{School of Psychological and Cognitive Sciences}, \orgname{Peking University}, \orgaddress{\street{Beijing}, \postcode{100871}, \country{China}}}
+\address[5]{\orgdiv{School of Biomedical Engineering}, \orgname{Hainan University}, \orgaddress{\street{Sanya}, \postcode{572025}, \country{China}}}
+\address[6]{\orgdiv{Institute for Infocomm Research}, \orgname{Agency for Science, Technology and Research}, \orgaddress{\street{Singapore}, \postcode{138632}, \country{Singapore}}}
+\address[7]{\orgdiv{Department of Ophthalmology, Yong Loo Lin School of Medicine}, \orgname{National University of Singapore}, \orgaddress{\street{Singapore}, \postcode{119228}, \country{Singapore}}}
+\address[8]{\orgdiv{Stem Cell and Regenerative Biology, Genome Institute of Singapore}, \orgname{A*STAR}, \orgaddress{\street{Singapore}, \postcode{138672}, \country{Singapore}}}
+
+\corresp[*]{Corresponding authors. Xiaohui Yao (\href{mailto:xiaohui.yao@hrbeu.edu.cn}{xiaohui.yao@hrbeu.edu.cn}); Shan Cong (\href{mailto:shan.cong@hrbeu.edu.cn}{shan.cong@hrbeu.edu.cn})}
+
+\received{Day}{Month}{Year}
+\revised{Day}{Month}{Year}
+\accepted{Day}{Month}{Year}
+
+\abstract{
+\textbf{Summary:} Engineering tissue-biased promoters in tomato requires computational approaches that connect regulatory sequence interpretation with promoter activity prediction and candidate design, but these tasks are often addressed by separate resources. TomatoPromoterDesigner is a reproducible Python framework that unifies promoter sequence processing, motif analysis, tissue-biased expression prediction and motif-aware promoter design within a single workflow. The framework combines package-native baseline modules with documented legacy-derived adapters, and provides standardized reporting, figure generation and reproducible example workflows to support tomato promoter engineering studies.\\
+\textbf{Availability and Implementation:} TomatoPromoterDesigner is implemented in Python and distributed as an installable command-line package. Source code, documentation and example workflows are freely available for non-commercial users at \url{https://github.com/Yaolab-fantastic/TomatoPromoterDesigner}.\\
+\textbf{Contact:} \href{mailto:xiaohui.yao@hrbeu.edu.cn}{xiaohui.yao@hrbeu.edu.cn}; \href{mailto:shan.cong@hrbeu.edu.cn}{shan.cong@hrbeu.edu.cn}.\\
+\textbf{Supplementary information:} Supplementary data are available at \textit{Bioinformatics} online.
+}
+
+\keywords{tomato promoter engineering, tissue-biased expression, motif-aware design, reproducible workflow, synthetic biology}
+
+\maketitle
+
+\section{Introduction}
+
+Precise regulation of gene expression is essential for plant synthetic biology and crop engineering, where tissue-biased promoters provide a means to control transgene activity with improved spatial specificity. Computational approaches can facilitate promoter engineering by enabling regulatory sequence interpretation, activity prediction, and candidate sequence design. However, these capabilities are frequently implemented as separate tools or task-specific workflows, limiting their integration into reproducible promoter engineering pipelines.
+
+Recent advances in regulatory sequence modeling have enabled diverse computational strategies for promoter analysis, including motif-based interpretation, promoter activity prediction, and sequence generation or optimization. Nevertheless, researchers often need to combine heterogeneous software components, input formats, and analysis procedures when moving from promoter characterization to candidate design. This fragmentation creates practical challenges for reproducibility, software accessibility, and systematic evaluation of computationally designed promoter candidates, particularly in crop-specific applications such as tomato promoter engineering.
+
+Here, we present TomatoPromoterDesigner, a reproducible Python framework for motif-aware analysis and design of tissue-biased tomato promoters. The framework integrates promoter sequence processing, motif analysis, tissue-biased expression prediction, and candidate design within a unified workflow. TomatoPromoterDesigner provides an installable command-line interface, standardized reporting, visualization support, and reproducible example workflows. The current release combines package-native baseline modules with documented legacy-derived adapters, enabling flexible integration of computational strategies while maintaining clear software and data availability boundaries. By connecting promoter interpretation, prediction, and design in a single toolkit, TomatoPromoterDesigner provides a practical computational resource for reproducible tomato promoter engineering workflows.
+
+\section{Implementation}
+
+TomatoPromoterDesigner is implemented as a modular Python framework for promoter analysis and design, with an emphasis on reproducibility, workflow consistency and command-line accessibility. The software is distributed as an installable package and exposes a unified command-line interface for sequence validation, motif annotation, tissue-biased expression prediction, candidate promoter design, report generation and figure export. This organization allows users to execute individual modules independently or combine them into an end-to-end workflow from promoter characterization to candidate evaluation.
+
+The framework accepts standard sequence and tabular inputs and performs sequence validation, normalization and structured output generation to support reproducible downstream analysis. Promoter interpretation is supported through motif-analysis components that annotate regulatory sequence features and summarize motif-related outputs in standardized tables. The current release provides package-native motif scanning together with documented legacy-derived motif analysis workflows, providing a stable interface for promoter interpretation while preserving compatibility with previously developed computational strategies where suitable inputs or archived resources are available.
+
+For tissue-biased expression analysis, the framework provides prediction modules that estimate promoter-associated activity across the tomato tissues represented in the current release. These include package-native baseline predictors bundled directly with the software, together with documented adapters for previously developed prediction approaches. The prediction layer is organized around a common result schema so that multiple computational backends can be used without changing user-facing input or output formats. This separation between interface and backend supports reproducible current use while allowing integration of additional validated prediction backends.
+
+A central function of TomatoPromoterDesigner is motif-aware promoter design. Given an input promoter sequence and a target tissue, the design workflow generates candidate promoter sequences and evaluates them within the same reporting structure used for prediction outputs. In the package-native route, candidate generation is performed through deterministic motif-aware candidate generation or sequence editing, whereas documented legacy-derived design workflows can be incorporated when compatible checkpoints are available. Candidate outputs can be summarized with predicted tissue-biased scores and quality-control information, enabling consistent comparison of original and designed promoter sequences for downstream review or experimental testing.
+
+To support reproducible use, the framework includes structured reporting, lightweight visualization utilities, bundled example inputs and provenance-aware data organization. Selected support tables, processed intermediate files and demonstration outputs are provided with the repository where redistribution is permitted, whereas larger checkpoints and auxiliary resources are tracked separately through manifests and provenance documentation. Together, these features position TomatoPromoterDesigner as a practical computational framework for reproducible tomato promoter engineering workflows.
+
+\section{Application Example and Validation}
+
+TomatoPromoterDesigner was evaluated as a reproducible workflow for processing, characterizing and designing tomato promoter sequences. The aim of this evaluation was not to establish a large-scale machine-learning benchmark, but to assess whether the framework could consistently connect promoter interpretation, tissue-biased prediction and candidate design within a unified software environment. Accordingly, we evaluated bundled tomato promoter examples distributed with the software release together with an archived validation table retained for provenance-preserved quantitative assessment.
+
+Using promoter examples bundled with the software package, TomatoPromoterDesigner generated standardized motif annotation outputs, tissue-associated prediction summaries, candidate design results and compact reports from the same input sequences. This workflow demonstrated that promoter sequence interpretation, prediction and design could be executed through a consistent command-line interface without manual conversion between intermediate formats. Motif-analysis outputs provided structured regulatory feature summaries, while prediction modules generated tissue-associated prediction scores defined by the current release. The resulting design outputs connected candidate generation with downstream evaluation by summarizing predicted scores, sequence modification information and quality-control indicators within a unified result schema. Together, these package-bundled examples illustrate the intended use of TomatoPromoterDesigner as an integrated promoter engineering workflow rather than a collection of independent analysis utilities.
+
+To provide a lightweight quantitative validation anchor, we examined an archived validation table retained within the repository for provenance-preserved evaluation. This table contains 12,575 predicted/measured scalar-expression pairs derived from earlier tomato promoter modeling workflows. Across this archived set, predicted and measured expression values showed a strong positive correlation (Pearson $r = 0.852$), indicating that the preserved evaluation outputs retained coherent quantitative structure suitable for software-level validation and reproducible figure reconstruction. Calculation details for this statistic are provided in the Supplementary Methods. This archived validation table serves as a provenance-preserved quantitative reference rather than a comprehensive benchmark of all prediction components currently supported by the framework.
+
+We further applied the design workflow to illustrate motif-aware promoter engineering in a tissue-targeted setting. Starting from an input tomato promoter sequence and a specified target tissue, TomatoPromoterDesigner generated candidate sequences together with predicted tissue-associated scores, sequence modification summaries and quality-control information. In package-native routes, candidate generation is performed through deterministic motif-aware sequence editing, whereas documented legacy-derived design workflows can be incorporated when compatible checkpoints are available. This design stage connects sequence modification with downstream evaluation, allowing original and designed promoter candidates to be compared within a unified output structure and prioritized for subsequent manual review or experimental testing.
+
+Together, these analyses demonstrate that TomatoPromoterDesigner provides a coherent software framework for tomato promoter engineering by linking promoter characterization, evaluation and candidate design through shared computational interfaces. The combination of reproducible example workflows, provenance-preserved validation resources and structured reporting enables transparent inspection and extension of computational promoter design processes for downstream studies.
+
+\section{Conclusion}
+
+TomatoPromoterDesigner provides a reproducible computational framework that connects promoter sequence interpretation, tissue-associated prediction and motif-aware candidate design within a unified workflow for tomato promoter engineering. By combining modular software components, structured reporting and provenance-aware resources, the framework enables transparent inspection and reproducible reuse of computational promoter analysis and design procedures. TomatoPromoterDesigner is intended to support researchers in prioritizing promoter candidates and integrating computational workflows into downstream experimental studies.
+
+\bibliographystyle{oup-abbrvnat}
+\bibliography{application_note_references}
+
+\end{document}

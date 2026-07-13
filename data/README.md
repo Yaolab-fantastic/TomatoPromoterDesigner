@@ -27,15 +27,23 @@ The root-level `outputs/` directory serves a different purpose:
 - it may contain temporary checks, exploratory exports, or user-specific runs
 - it is not the canonical location for repository-bundled reference results
 
-## Refreshing the repository data
+## Reproducing manuscript-facing data
 
 Run:
+
+```bash
+make reproduce-legacy
+```
+
+This command regenerates the retained result pack used by the Application Note figures and supplementary materials under `data/results/reproducible_legacy/`.
+
+For the broader data-sync utility used during repository maintenance, run:
 
 ```bash
 PYTHONPATH=src python scripts/sync_repository_data.py
 ```
 
-This script copies the selected raw files into `data/raw`, refreshes processed tables, regenerates demo outputs, regenerates bundled figures, and updates `data/inventory.tsv`.
+This script copies selected raw files into `data/raw`, refreshes processed tables, regenerates demo outputs, regenerates bundled figures, and updates `data/inventory.tsv`.
 
 ## Inventory files
 
@@ -45,5 +53,10 @@ This script copies the selected raw files into `data/raw`, refreshes processed t
   - higher-level registry of upstream origins, license evidence, and redistribution notes
 - `summary.json`
   - compact count summary by stage
-- `external/large_files.tsv`
-  - large upstream artifacts intentionally excluded from the git repository
+- `external/external_resources.tsv`
+  - optional large artifacts and checkpoints intentionally excluded from normal git history
+
+## Documentation
+
+- `docs/tool_documentation.md`
+  - tool usage, manuscript reproduction, data resources, model boundaries and provenance notes

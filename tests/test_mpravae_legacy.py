@@ -72,7 +72,7 @@ class TestMpraVAELegacyAdapter(unittest.TestCase):
             "seq1",
             "AAATTGTAACAAATAATACAAAATATTTGTGAATACTAATGATTTCCAAATGGGATACCTTTTTGTTGTAAATAAGTGGAAAGGCAAAGTAGATAAATTCGCCTTTCCTAAGTATCCTTTTGGTCACAATTTCCAAGAGAAAAGAACAGAAAAGAAAAGAGAGAA",
         )
-        results = adapter.design([record], target_tissue="fruit", candidates=2, seed=20260708)
+        results = adapter.design([record], target_tissue="fruit", candidates=2, seed=42)
         self.assertEqual(len(results), 2)
         self.assertTrue(any(result.designed_sequence != result.original_sequence for result in results))
         self.assertTrue(all(result.design_status for result in results))
