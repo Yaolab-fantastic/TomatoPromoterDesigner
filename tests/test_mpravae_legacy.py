@@ -36,7 +36,7 @@ class TestMpraVAELegacyAdapter(unittest.TestCase):
 
     def test_mpravae_prediction_if_checkpoint_available(self) -> None:
         if not Path(DEFAULT_MPRAVAE_CHECKPOINT).exists():
-            self.skipTest("Legacy MpraVAE checkpoint not available in this workspace.")
+            self.skipTest("Bundled MpraVAE checkpoint not available.")
 
         adapter = MpraVAETomatoAdapter()
         results = adapter.predict(
@@ -52,7 +52,7 @@ class TestMpraVAELegacyAdapter(unittest.TestCase):
 
     def test_mpravae_prediction_is_deterministic_if_checkpoint_available(self) -> None:
         if not Path(DEFAULT_MPRAVAE_CHECKPOINT).exists():
-            self.skipTest("Legacy MpraVAE checkpoint not available in this workspace.")
+            self.skipTest("Bundled MpraVAE checkpoint not available.")
 
         adapter = MpraVAETomatoAdapter()
         record = SequenceRecord(
@@ -65,7 +65,7 @@ class TestMpraVAELegacyAdapter(unittest.TestCase):
 
     def test_mpravae_design_emits_novel_sequences_if_checkpoint_available(self) -> None:
         if not Path(DEFAULT_MPRAVAE_CHECKPOINT).exists():
-            self.skipTest("Legacy MpraVAE checkpoint not available in this workspace.")
+            self.skipTest("Bundled MpraVAE checkpoint not available.")
 
         adapter = MpraVAETomatoAdapter()
         record = SequenceRecord(

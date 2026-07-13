@@ -14,7 +14,7 @@ test:
 demo:
 	PYTHONPATH=src $(PYTHON) -m tomato_promoter_designer.cli annotate --input examples/demo_input.fasta --output outputs/demo_annotate.csv
 	PYTHONPATH=src $(PYTHON) -m tomato_promoter_designer.cli predict --input examples/demo_input.fasta --output outputs/demo_predict.csv
-	PYTHONPATH=src $(PYTHON) -m tomato_promoter_designer.cli design --input examples/demo_input.fasta --target fruit --candidates 3 --output outputs/demo_design.csv
+	PYTHONPATH=src $(PYTHON) -m tomato_promoter_designer.cli design --input examples/demo_input.fasta --target fruit --candidates 3 --seed 42 --output outputs/demo_design.csv
 	PYTHONPATH=src $(PYTHON) -m tomato_promoter_designer.cli report --input outputs/demo_design.csv --output outputs/demo_report.json
 
 legacy-figures:

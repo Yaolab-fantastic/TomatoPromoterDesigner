@@ -11,6 +11,7 @@ from tomato_promoter_designer.legacy.deepseed_expression import (
 def run_legacy_prediction(
     records: list[SequenceRecord],
     checkpoint_path: str | Path | None = None,
+    module_dir: str | Path | None = None,
 ) -> list[LegacyPredictionResult]:
-    predictor = DeepSeedScalarExpressionPredictor(checkpoint_path=checkpoint_path)
+    predictor = DeepSeedScalarExpressionPredictor(checkpoint_path=checkpoint_path, module_dir=module_dir)
     return predictor.predict(records)

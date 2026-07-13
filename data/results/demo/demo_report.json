@@ -6,42 +6,42 @@
     "fruit"
   ],
   "canonical_length": 165,
-  "average_edit_distance": 65.1667,
-  "average_num_mutations": 74.0,
-  "min_num_mutations": 61,
-  "max_num_mutations": 85,
-  "num_qc_passed": 6,
-  "qc_pass_rate": 1.0,
+  "average_edit_distance": 17.6667,
+  "average_num_mutations": 17.6667,
+  "min_num_mutations": 13,
+  "max_num_mutations": 24,
+  "num_qc_passed": 0,
+  "qc_pass_rate": null,
   "design_status_counts": {
-    "mpravae_decoded": 6
+    "baseline_motif_preserving": 6
   },
   "design_status_display_counts": {
-    "MpraVAE decoded": 6
+    "Baseline motif-preserving": 6
   },
   "best_candidate_by_sequence": [
     {
       "sequence_id": "tomato_promoter_1",
       "target_tissue": "fruit",
       "best_candidate_rank": 1,
-      "design_status": "mpravae_decoded",
-      "design_status_label": "MpraVAE decoded",
-      "passes_qc": true,
-      "num_mutations": 85,
-      "target_score": 2.3823,
-      "runner_up_score": 2.1653,
-      "target_margin": 0.217
+      "design_status": "baseline_motif_preserving",
+      "design_status_label": "Baseline motif-preserving",
+      "passes_qc": null,
+      "num_mutations": 17,
+      "target_score": 9.2427,
+      "runner_up_score": 4.2048,
+      "target_margin": 5.0379
     },
     {
       "sequence_id": "tomato_promoter_2",
       "target_tissue": "fruit",
       "best_candidate_rank": 1,
-      "design_status": "mpravae_decoded",
-      "design_status_label": "MpraVAE decoded",
-      "passes_qc": true,
-      "num_mutations": 61,
-      "target_score": 1.5961,
-      "runner_up_score": 1.6209,
-      "target_margin": -0.0248
+      "design_status": "baseline_motif_preserving",
+      "design_status_label": "Baseline motif-preserving",
+      "passes_qc": null,
+      "num_mutations": 24,
+      "target_score": 9.4161,
+      "runner_up_score": 6.1406,
+      "target_margin": 3.2755
     }
   ]
 }

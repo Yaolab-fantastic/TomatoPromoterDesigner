@@ -1,9 +1,10 @@
 {
   "counts": {
     "raw": 43,
+    "models": 3,
     "processed": 3,
     "results": 28,
     "external": 1
   },
-  "total_files": 75
+  "total_files": 78
 }

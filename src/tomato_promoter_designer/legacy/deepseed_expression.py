@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import math
+import os
 import sys
 from pathlib import Path
 
@@ -9,14 +10,22 @@ import torch
 from tomato_promoter_designer.io.schema import LegacyPredictionResult, SequenceRecord
 
 
-def _workspace_root() -> Path:
-    return Path(__file__).resolve().parents[4]
+def _repo_root() -> Path:
+    return Path(__file__).resolve().parents[3]
 
 
-DEFAULT_DEEPSEED_MODULE_DIR = _workspace_root() / "deepseed" / "Predictor"
-DEFAULT_DEEPSEED_CHECKPOINT = (
-    DEFAULT_DEEPSEED_MODULE_DIR / "results" / "model" / "165_mpra_expr_denselstm.pth"
-)
+def _default_models_dir() -> Path:
+    override = os.environ.get("TOMATO_PROMOTER_DESIGNER_MODELS_DIR")
+    if override:
+        return Path(override)
+    repo_models = _repo_root() / "models"
+    if repo_models.exists():
+        return repo_models
+    return Path.cwd() / "models"
+
+
+DEFAULT_DEEPSEED_MODULE_DIR = _default_models_dir() / "deepseed"
+DEFAULT_DEEPSEED_CHECKPOINT = DEFAULT_DEEPSEED_MODULE_DIR / "165_mpra_expr_denselstm.pth"
 
 
 def encode_sequence(sequence: str) -> torch.Tensor:
@@ -97,4 +106,3 @@ class DeepSeedScalarExpressionPredictor:
                         )
                     )
         return outputs
-

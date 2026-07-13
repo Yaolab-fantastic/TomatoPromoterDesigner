@@ -16,6 +16,8 @@ This repository keeps publication-facing data in four layers so the software pac
 - `external/`
   - manifests for large files intentionally left outside git
   - these remain candidates for Zenodo, release assets, or an optional download script
+- `../models/`
+  - bundled lightweight MpraVAE and deepseed checkpoints used by explicit legacy adapter commands
 
 ## Boundary with `outputs/`
 
@@ -54,7 +56,7 @@ This script copies selected raw files into `data/raw`, refreshes processed table
 - `summary.json`
   - compact count summary by stage
 - `external/external_resources.tsv`
-  - optional large artifacts and checkpoints intentionally excluded from normal git history
+  - optional large artifacts intentionally excluded from normal git history
 
 ## Documentation
 

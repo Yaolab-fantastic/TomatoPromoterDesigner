@@ -49,7 +49,7 @@ def build_parser() -> argparse.ArgumentParser:
 
     predict = subparsers.add_parser(
         "predict",
-        help="Predict tissue-biased expression scores, auto-preferring the real MpraVAE backend.",
+        help="Generate deterministic package-native tissue-associated scores.",
     )
     predict.add_argument("--input", required=True, help="Input FASTA file.")
     predict.add_argument("--output", required=True, help="Output CSV path.")
@@ -74,10 +74,15 @@ def build_parser() -> argparse.ArgumentParser:
         required=False,
         help="Optional path to a legacy deepseed checkpoint.",
     )
+    predict_legacy.add_argument(
+        "--module-dir",
+        required=False,
+        help="Optional directory containing the legacy deepseed SeqRegressionModel.py definition.",
+    )
 
     design = subparsers.add_parser(
         "design",
-        help="Generate designed candidates, auto-preferring the real MpraVAE backend.",
+        help="Generate deterministic package-native motif-aware candidate promoters.",
     )
     design.add_argument("--input", required=True, help="Input FASTA file.")
     design.add_argument("--target", required=True, choices=["root", "stem", "leaf", "fruit"])
@@ -187,7 +192,7 @@ def main(argv: list[str] | None = None) -> int:
         return 0
 
     if args.command in {"predict-legacy", "predict-legacy-deepseed"}:
-        predictions = run_legacy_prediction(records, checkpoint_path=args.checkpoint)
+        predictions = run_legacy_prediction(records, checkpoint_path=args.checkpoint, module_dir=args.module_dir)
         write_dict_rows([item.to_dict() for item in predictions], args.output)
         return 0
 

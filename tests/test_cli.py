@@ -52,9 +52,10 @@ class TestCLI(unittest.TestCase):
 
     def test_predict_legacy_deepseed_command_writes_output(self) -> None:
         repo_root = Path(__file__).resolve().parents[1]
-        checkpoint_path = repo_root.parent / "deepseed" / "Predictor" / "results" / "model" / "165_mpra_expr_denselstm.pth"
+        checkpoint_path = repo_root / "models" / "deepseed" / "165_mpra_expr_denselstm.pth"
+        module_dir = repo_root / "models" / "deepseed"
         if not checkpoint_path.exists():
-            self.skipTest("Legacy deepseed checkpoint not available in this workspace.")
+            self.skipTest("Bundled deepseed checkpoint not available.")
 
         env = os.environ.copy()
         env["PYTHONPATH"] = str(repo_root / "src")
@@ -74,6 +75,8 @@ class TestCLI(unittest.TestCase):
             str(output_path),
             "--checkpoint",
             str(checkpoint_path),
+            "--module-dir",
+            str(module_dir),
         ]
         subprocess.run(cmd, capture_output=True, text=True, env=env, check=True)
         self.assertTrue(output_path.exists())
@@ -81,9 +84,9 @@ class TestCLI(unittest.TestCase):
 
     def test_predict_legacy_mpravae_command_writes_output(self) -> None:
         repo_root = Path(__file__).resolve().parents[1]
-        checkpoint_path = repo_root.parent / "MpraVAE" / "code" / "models1" / "best_val_corr_model.pth"
+        checkpoint_path = repo_root / "models" / "mpravae" / "best_val_corr_model.pth"
         if not checkpoint_path.exists():
-            self.skipTest("Legacy MpraVAE checkpoint not available in this workspace.")
+            self.skipTest("Bundled MpraVAE checkpoint not available.")
 
         env = os.environ.copy()
         env["PYTHONPATH"] = str(repo_root / "src")
@@ -110,9 +113,9 @@ class TestCLI(unittest.TestCase):
 
     def test_design_legacy_mpravae_command_writes_output(self) -> None:
         repo_root = Path(__file__).resolve().parents[1]
-        checkpoint_path = repo_root.parent / "MpraVAE" / "code" / "models1" / "best_val_corr_model.pth"
+        checkpoint_path = repo_root / "models" / "mpravae" / "best_val_corr_model.pth"
         if not checkpoint_path.exists():
-            self.skipTest("Legacy MpraVAE checkpoint not available in this workspace.")
+            self.skipTest("Bundled MpraVAE checkpoint not available.")
 
         env = os.environ.copy()
         env["PYTHONPATH"] = str(repo_root / "src")
@@ -242,23 +245,23 @@ class TestCLI(unittest.TestCase):
                 "--output-dir",
                 str(output_dir),
                 "--mpravae-loss-history",
-                str(repo_root.parent / "MpraVAE" / "code" / "transformerresult" / "results1" / "loss_curves" / "loss_history.csv"),
+                str(repo_root / "data" / "raw" / "mpravae" / "loss_history.csv"),
                 "--mpravae-designed-promoters",
-                str(repo_root.parent / "MpraVAE" / "results" / "designed_promoters.csv"),
+                str(repo_root / "data" / "raw" / "mpravae" / "designed_promoters.csv"),
                 "--mpravae-prediction-results",
-                str(repo_root.parent / "MpraVAE" / "results" / "generated_prediction_results.csv"),
+                str(repo_root / "data" / "raw" / "mpravae" / "generated_prediction_results.csv"),
                 "--deepseed-training-log",
-                str(repo_root.parent / "deepseed" / "Predictor" / "results1" / "training_log165_mpra_expr_denselstm.csv"),
+                str(repo_root / "data" / "raw" / "deepseed" / "training_log165_mpra_expr_denselstm.csv"),
                 "--mpravae-mutated-file",
-                str(repo_root.parent / "MpraVAE" / "data" / "bianjijuli" / "mutated_file.csv"),
+                str(repo_root / "data" / "raw" / "mpravae" / "mutated_file.csv"),
                 "--mpravae-random-promoters",
-                str(repo_root.parent / "MpraVAE" / "data" / "random_promoters_200.csv"),
+                str(repo_root / "data" / "raw" / "mpravae" / "random_promoters_200.csv"),
                 "--mpravae-training-set",
-                str(repo_root.parent / "MpraVAE" / "data" / "vaedata" / "training_set.csv"),
+                str(repo_root / "data" / "raw" / "mpravae" / "training_set.csv"),
                 "--dnabert-motif-summary",
-                str(repo_root / "outputs" / "dnabert_legacy" / "motif_summary.csv"),
+                str(repo_root / "data" / "processed" / "dnabert_legacy" / "motif_summary.csv"),
                 "--dnabert-tfbs-dir",
-                str(repo_root.parent / "DNABERT" / "motif" / "result" / "6-2"),
+                str(repo_root / "data" / "raw" / "dnabert" / "tfbs_assets"),
             ]
             subprocess.run(cmd, capture_output=True, text=True, env=env, check=True)
             self.assertTrue((output_dir / "manifest.json").exists())

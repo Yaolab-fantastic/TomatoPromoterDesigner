@@ -12,11 +12,11 @@ TomatoPromoterDesigner supports five core tasks:
 | --- | --- | --- |
 | Input validation | Check FASTA records, identifiers and sequence symbols | `validate-input` |
 | Motif annotation | Scan promoter sequences for configured motifs | `annotate` |
-| Tissue-associated prediction | Report root, stem, leaf and fruit scores | `predict` |
+| Tissue-associated scoring | Report root, stem, leaf and fruit heuristic scores | `predict` |
 | Motif-aware design | Generate candidate promoters for a target tissue | `design` |
 | Reporting and figures | Summarize outputs and export simple figures | `report`, `figures` |
 
-The current release also includes documented legacy-derived adapters for retained MpraVAE, DNABERT and deepseed workflows. These adapters are available through the same command-line interface, but some routes require compatible support files or checkpoints.
+The current release also includes documented legacy-derived adapters for retained MpraVAE, DNABERT and deepseed workflows. The lightweight MpraVAE and deepseed checkpoints required by the explicit legacy prediction/design commands are bundled under `models/`; DNABERT-derived motif post-processing still requires the retained tabular and attention resources documented below.
 
 ## 2. Release Boundary
 
@@ -25,7 +25,7 @@ The package has three layers:
 | Layer | Meaning | Availability |
 | --- | --- | --- |
 | Package-native modules | Deterministic modules implemented directly in the package | Always runnable after installation |
-| Legacy-derived adapters | Wrappers around earlier tomato promoter modeling workflows | Runnable when compatible resources are available |
+| Legacy-derived adapters | Wrappers around earlier tomato promoter modeling workflows | MpraVAE and deepseed checkpoints are bundled; DNABERT resources are documented separately |
 | Retained result resources | Curated tables and regenerated results used for manuscript figures | Distributed as repository data resources |
 
 The software should be described as a reproducible framework, not as a newly trained promoter deep learning model.
@@ -131,10 +131,10 @@ Main fields:
 | --- | --- |
 | `sequence_id` | Input promoter identifier |
 | `sequence` | Normalized sequence |
-| `expr_root` | Root-associated score |
-| `expr_stem` | Stem-associated score |
-| `expr_leaf` | Leaf-associated score |
-| `expr_fruit` | Fruit-associated score |
+| `expr_root` | Root-associated heuristic score |
+| `expr_stem` | Stem-associated heuristic score |
+| `expr_leaf` | Leaf-associated heuristic score |
+| `expr_fruit` | Fruit-associated heuristic score |
 | `preferred_tissue` | Tissue with the highest score |
 
 ### Design Output
@@ -198,9 +198,9 @@ These commands expose retained or migrated routes from earlier tomato promoter m
 | Command | Purpose |
 | --- | --- |
 | `annotate-legacy-dnabert` | Run DNABERT-derived attention-to-motif post-processing |
-| `predict-legacy-mpravae` | Run the migrated MpraVAE four-tissue prediction route when compatible resources are available |
-| `design-legacy-mpravae` | Run the migrated MpraVAE latent-space design route when compatible resources are available |
-| `predict-legacy-deepseed` | Run the migrated deepseed scalar-expression prediction route when compatible resources are available |
+| `predict-legacy-mpravae` | Run the bundled MpraVAE four-tissue checkpoint adapter |
+| `design-legacy-mpravae` | Run the bundled MpraVAE latent-space design checkpoint adapter |
+| `predict-legacy-deepseed` | Run the bundled deepseed scalar-expression checkpoint adapter |
 | `legacy-figures` | Reconstruct retained legacy-derived figure bundles |
 
 Example:
@@ -212,7 +212,7 @@ tomato-promoter-designer annotate-legacy-dnabert \
   --output-dir outputs/dnabert_legacy
 ```
 
-If compatible checkpoints are unavailable, use package-native `predict` and `design` for deterministic installed behavior.
+Package-native `predict` and `design` remain deterministic and do not use these checkpoints unless an explicit legacy command is called.
 
 ## 9. Reproducing Application Note Results
 
@@ -247,7 +247,7 @@ Important outputs:
 | `tables/design_candidate_summary.csv` | Source table for Supplementary Figure S5 |
 | `tables/prediction_reference_stats.csv` | Pearson statistic for the quantitative reference |
 
-The polished manuscript and supplementary figures are stored under `docs/figures/`.
+The polished manuscript and supplementary figures are stored under `docs/fig/`.
 
 ## 10. Why Demo Outputs Are Small
 
@@ -274,8 +274,9 @@ Bundled data layers:
 | `data/results/demo/` | Package-native demo outputs |
 | `data/results/reproducible_legacy/` | Retained manuscript-facing result pack |
 | `data/external/` | Manifests for large files not bundled by default |
+| `models/` | Bundled lightweight MpraVAE and deepseed checkpoints plus checksum manifest |
 
-Large checkpoints, genomes, HDF5 corpora and BLAST databases are not bundled into normal git history. They should be distributed separately through release assets, Zenodo or an equivalent archive when required.
+The lightweight legacy checkpoints used by the CLI adapters are bundled in `models/`. Large genomes, HDF5 corpora, BLAST databases and optional external resources are not bundled into normal git history; they should be distributed separately through release assets, Zenodo or an equivalent archive when required.
 
 Provenance files:
 
@@ -312,7 +313,7 @@ Use:
 - package-native module
 - legacy-derived adapter
 - retained result resource
-- compatible checkpoint, when available
+- bundled checkpoint adapter
 - reproducible retained result pack
 
 Avoid:

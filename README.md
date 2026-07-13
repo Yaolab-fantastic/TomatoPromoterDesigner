@@ -6,9 +6,10 @@ It provides a unified workflow for:
 
 - validating promoter FASTA inputs
 - annotating tomato promoter motifs
-- predicting root, stem, leaf and fruit-associated scores
+- reporting root, stem, leaf and fruit-associated heuristic scores
 - generating motif-aware candidate promoter sequences
 - exporting reports and figure-ready result summaries
+- running bundled legacy-derived checkpoint adapters explicitly when needed
 - reproducing retained manuscript-facing result resources
 
 TomatoPromoterDesigner is a software framework, not a newly trained promoter deep learning model. The repository contains package-native deterministic modules, documented legacy-derived adapters and retained result tables used for the accompanying Application Note.
@@ -136,7 +137,7 @@ If the input FASTA contains 100 promoters and `--candidates 5` is used, the desi
 | --- | --- |
 | `sequence_id` | Input promoter identifier |
 | `sequence` | Normalized promoter sequence |
-| `expr_root`, `expr_stem`, `expr_leaf`, `expr_fruit` | Tissue-associated prediction scores |
+| `expr_root`, `expr_stem`, `expr_leaf`, `expr_fruit` | Tissue-associated heuristic scores |
 | `preferred_tissue` | Tissue with the highest score |
 
 `design` writes a candidate table:
@@ -147,7 +148,7 @@ If the input FASTA contains 100 promoters and `--candidates 5` is used, the desi
 | `designed_sequence` | Designed candidate promoter sequence |
 | `target_tissue` | Requested target tissue |
 | `candidate_rank` | Rank within candidates for the same input promoter |
-| `expr_root`, `expr_stem`, `expr_leaf`, `expr_fruit` | Candidate prediction scores |
+| `expr_root`, `expr_stem`, `expr_leaf`, `expr_fruit` | Candidate tissue-associated heuristic scores |
 | `preserved_motifs` | Motifs protected by the package-native design route |
 | `num_mutations` | Number of point differences from the input sequence |
 | `passes_qc` | Quality-control flag when available |
@@ -190,9 +191,9 @@ data/results/reproducible_legacy/
 | `figures` | Export lightweight figures from result CSV files |
 | `legacy-figures` | Reconstruct retained legacy-derived figure bundles |
 | `annotate-legacy-dnabert` | Run retained DNABERT-derived motif post-processing |
-| `predict-legacy-mpravae` | Run MpraVAE-derived prediction when compatible resources are available |
-| `design-legacy-mpravae` | Run MpraVAE-derived design when compatible resources are available |
-| `predict-legacy-deepseed` | Run deepseed-derived scalar prediction when compatible resources are available |
+| `predict-legacy-mpravae` | Run the bundled MpraVAE-derived four-tissue checkpoint adapter |
+| `design-legacy-mpravae` | Run the bundled MpraVAE-derived latent design checkpoint adapter |
+| `predict-legacy-deepseed` | Run the bundled deepseed-derived scalar-expression checkpoint adapter |
 
 ## Repository Layout
 
@@ -202,7 +203,7 @@ TomatoPromoterDesigner/
 ├── examples/                       # runnable FASTA examples
 ├── data/                           # curated data and retained result resources
 ├── docs/                           # tool documentation and manuscript sources
-├── models/                         # model/checkpoint manifests
+├── models/                         # bundled lightweight checkpoints and model manifest
 ├── scripts/                        # data and result reproduction scripts
 ├── tests/                          # unit and regression tests
 └── outputs/                        # local scratch outputs
@@ -226,7 +227,16 @@ docs/application_note_references.bib
 
 ## Data And Model Boundary
 
-Package-native commands run after installation. Legacy-derived routes may require compatible retained support files or checkpoints. Large checkpoints, genomes, HDF5 corpora and BLAST databases are tracked through manifests rather than bundled into normal git history.
+Package-native commands run after installation and do not require model checkpoints. The current repository also bundles lightweight retained checkpoints for explicit legacy-derived routes:
+
+```text
+models/mpravae/best_val_corr_model.pth
+models/deepseed/165_mpra_expr_denselstm.pth
+models/deepseed/SeqRegressionModel.py
+models/weights_manifest.json
+```
+
+Large genomes, HDF5 corpora, BLAST databases and optional external resources are tracked through manifests rather than bundled into normal git history.
 
 See `docs/tool_documentation.md` for data, model and reproduction details.
 

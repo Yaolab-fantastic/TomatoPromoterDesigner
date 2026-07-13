@@ -17,7 +17,7 @@ class TestLegacyAdapters(unittest.TestCase):
 
     def test_deepseed_prediction_if_checkpoint_available(self) -> None:
         if not Path(DEFAULT_DEEPSEED_CHECKPOINT).exists():
-            self.skipTest("Legacy deepseed checkpoint not available in this workspace.")
+            self.skipTest("Bundled deepseed checkpoint not available.")
 
         predictor = DeepSeedScalarExpressionPredictor()
         results = predictor.predict(

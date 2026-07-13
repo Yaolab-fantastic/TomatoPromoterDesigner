@@ -1,5 +1,8 @@
 stage	path	source	note
 external	data/external/external_resources.tsv	external_resource_manifest	Optional large raw/model artifacts intentionally not copied into git.
+models	models/mpravae/best_val_corr_model.pth	MpraVAE retained source	Bundled lightweight checkpoint for explicit MpraVAE-derived adapter commands.
+models	models/deepseed/165_mpra_expr_denselstm.pth	deepseed retained source	Bundled lightweight checkpoint for explicit deepseed-derived scalar prediction.
+models	models/deepseed/SeqRegressionModel.py	deepseed retained source	Model class definition required to load the bundled deepseed PyTorch checkpoint.
 processed	data/processed/dnabert_legacy/motif_summary.csv	data/raw/dnabert/dev.tsv + data/raw/dnabert/atten.npy	Processed motif ranking from migrated DNABERT adapter.
 processed	data/processed/dnabert_legacy/processed_sequences.csv	data/raw/dnabert/dev.tsv + data/raw/dnabert/atten.npy	Per-sequence processed motif annotations from migrated DNABERT adapter.
 processed	data/processed/dnabert_legacy/run_metadata.json	data/raw/dnabert/dev.tsv + data/raw/dnabert/atten.npy	Run metadata for migrated DNABERT processing.

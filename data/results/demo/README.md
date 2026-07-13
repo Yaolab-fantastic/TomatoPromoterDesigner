@@ -9,9 +9,9 @@ These files are intended to show the expected shape of package results without r
 - `demo_annotate.csv`
   - motif annotations for each input promoter sequence
 - `demo_predict.csv`
-  - tissue-wise prediction scores for each input promoter sequence
+  - package-native tissue-associated heuristic scores for each input promoter sequence
 - `demo_design.csv`
-  - ranked candidate designs for fruit-biased promoter optimization
+  - ranked package-native candidate designs for fruit-targeted promoter scoring
 - `demo_report.json`
   - compact supplementary-style summary of the design output
 
@@ -35,9 +35,9 @@ These files are intended to show the expected shape of package results without r
 - `sequence`
   - promoter sequence used for prediction
 - `expr_root`, `expr_stem`, `expr_leaf`, `expr_fruit`
-  - predicted activity scores for the four tomato tissues
+  - deterministic tissue-associated heuristic scores for the four output tissues
 - `preferred_tissue`
-  - tissue with the highest predicted score for that sequence
+  - tissue with the highest reported score for that sequence
 
 ## `demo_design.csv`
 
@@ -52,20 +52,17 @@ These files are intended to show the expected shape of package results without r
 - `designed_sequence`
   - designed candidate sequence produced by the workflow
 - `expr_root`, `expr_stem`, `expr_leaf`, `expr_fruit`
-  - predicted scores for the designed candidate
+  - deterministic tissue-associated heuristic scores for the designed candidate
 - `preserved_motifs`
   - motif summary preserved or tracked during design
-  - `not_tracked` indicates that motif preservation was not explicitly tracked for that route
 - `design_status`
   - machine-readable description of how the final candidate was produced
-  - `mpravae_decoded`: accepted directly from the MpraVAE-derived design route
-  - `mpravae_repaired_by_reversion`: accepted after low-confidence edits were reverted for QC
-  - `mpravae_qc_fallback`: original sequence retained after candidate QC fallback
   - `baseline_motif_preserving`: produced by the package-native baseline design route
+  - MpraVAE-derived statuses appear only in outputs from the explicit `design-legacy-mpravae` command
 - `num_mutations`
   - number of base differences between `original_sequence` and `designed_sequence`
 - `passes_qc`
-  - whether the final design passed the built-in promoter QC rule set
+  - route-specific quality-control flag when available; blank values indicate no QC flag was emitted by the package-native route
 
 ## `demo_report.json`
 
@@ -78,7 +75,7 @@ These files are intended to show the expected shape of package results without r
 - `target_tissues`
   - tissues requested during design generation
 - `canonical_length`
-  - expected promoter length for the tomato workflow
+  - common input length in the bundled demo; MpraVAE-derived routes specifically require 165-bp unambiguous sequences
 - `average_edit_distance`
   - mean edit distance between original and designed sequences
 - `average_num_mutations`
@@ -86,9 +83,9 @@ These files are intended to show the expected shape of package results without r
 - `min_num_mutations`, `max_num_mutations`
   - mutation count range across candidates
 - `num_qc_passed`
-  - number of candidates passing QC
+  - number of candidates passing QC when route-specific QC flags are available
 - `qc_pass_rate`
-  - fraction of candidates passing QC
+  - fraction of candidates passing QC when route-specific QC flags are available
 - `design_status_counts`
   - raw counts by machine-readable design status
 - `design_status_display_counts`

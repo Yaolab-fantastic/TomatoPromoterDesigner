@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import random
 import re
+import os
 from pathlib import Path
 
 import torch
@@ -14,13 +15,23 @@ from tomato_promoter_designer.io.schema import DesignResult, PredictionResult, S
 BASES = ("A", "C", "G", "T")
 BASE_TO_INDEX = {base: index for index, base in enumerate(BASES)}
 TISSUE_ORDER = ("root", "stem", "leaf", "fruit")
-DEFAULT_MPRAVAE_CHECKPOINT = (
-    Path(__file__).resolve().parents[4]
-    / "MpraVAE"
-    / "code"
-    / "models1"
-    / "best_val_corr_model.pth"
-)
+
+
+def _repo_root() -> Path:
+    return Path(__file__).resolve().parents[3]
+
+
+def _default_models_dir() -> Path:
+    override = os.environ.get("TOMATO_PROMOTER_DESIGNER_MODELS_DIR")
+    if override:
+        return Path(override)
+    repo_models = _repo_root() / "models"
+    if repo_models.exists():
+        return repo_models
+    return Path.cwd() / "models"
+
+
+DEFAULT_MPRAVAE_CHECKPOINT = _default_models_dir() / "mpravae" / "best_val_corr_model.pth"
 
 _TATA_PATTERN = re.compile(r"TATA[AT]A[AT]")
 TOMATO_GC_RANGE = (0.12, 0.52)

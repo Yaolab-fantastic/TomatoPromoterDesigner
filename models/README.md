@@ -1,27 +1,36 @@
 # Models
 
-This directory is reserved for model manifests, metadata, and eventually published weights.
+This directory contains the bundled lightweight checkpoints used by the explicit legacy-derived adapter commands.
 
-## Current status
+## Bundled Checkpoints
 
-The repository is wired for model integration, but the current package still ships with deterministic baseline implementations so the command-line interface and file contracts remain stable until final public weights are frozen.
+| Path | Used by | Notes |
+| --- | --- | --- |
+| `models/mpravae/best_val_corr_model.pth` | `predict-legacy-mpravae`, `design-legacy-mpravae` | Tomato four-tissue VAE + predictor checkpoint. The adapter architecture is implemented in `src/tomato_promoter_designer/legacy/mpravae_tomato.py`. |
+| `models/deepseed/165_mpra_expr_denselstm.pth` | `predict-legacy-deepseed` | Scalar-expression DenseLSTM checkpoint retained from the deepseed workflow. |
+| `models/deepseed/SeqRegressionModel.py` | `predict-legacy-deepseed` | Required class-definition file for loading the pickled deepseed PyTorch model. |
 
-## Planned assets
+Checksums and status are recorded in `models/weights_manifest.json`.
 
-- `weights_manifest.json`
-  - model names
-  - version hashes
-  - expected input length
-  - source publication tag
-  - download URL or DOI
-- trained expression predictor weights
-- trained promoter design backend weights
-- motif annotation backend metadata
+## Important Boundary
 
-## Recommended release pattern
+Package-native commands do not require these files:
 
-1. store source code in GitHub
-2. tag a release
-3. archive the release in Zenodo
-4. publish weight artifacts with checksums
-5. update `weights_manifest.json`
+```bash
+tomato-promoter-designer predict
+tomato-promoter-designer design
+```
+
+The bundled checkpoints are used only by explicit legacy commands:
+
+```bash
+tomato-promoter-designer predict-legacy-mpravae
+tomato-promoter-designer design-legacy-mpravae
+tomato-promoter-designer predict-legacy-deepseed
+```
+
+If the model directory is moved outside the repository, set:
+
+```bash
+export TOMATO_PROMOTER_DESIGNER_MODELS_DIR=/path/to/models
+```
