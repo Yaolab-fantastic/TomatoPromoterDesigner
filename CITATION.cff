@@ -3,8 +3,8 @@ title: TomatoPromoterDesigner
 message: "If you use this software, please cite this software release and the accompanying article when available."
 type: software
 authors:
-  - family-names: Zhou
-    given-names: Jie
+  - family-names: Zhoujie Fan
+    given-names: 
 license: MIT
 version: 0.1.0
 date-released: 2026-07-08
