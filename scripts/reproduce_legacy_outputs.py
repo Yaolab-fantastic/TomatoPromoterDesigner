@@ -413,7 +413,7 @@ def build_design_candidate_summary() -> tuple[Path, Path]:
     draw.text((x0 - 92, y0 + 190), "point differences", font=FONT_SMALL, fill=COLORS["muted"])
     draw.text((x0 + plot_w + 34, y0 + 20), f"n={len(out_rows)}", font=FONT_SMALL, fill=COLORS["muted"])
     draw.text((x0 + plot_w + 34, y0 + 48), f"median edits={sorted(mutations)[len(mutations)//2]:.0f}", font=FONT_SMALL, fill=COLORS["muted"])
-    figure_path = _save_image(image, FIGURE_DIR / "figS5_design_candidate_summary.png")
+    figure_path = _save_image(image, FIGURE_DIR / "FigS5_design_candidate_summary.png")
     return table_path, figure_path
 
 

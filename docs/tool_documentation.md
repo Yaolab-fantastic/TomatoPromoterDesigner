@@ -263,7 +263,44 @@ The bundled demo uses two promoter sequences so that installation and CLI behavi
 
 This design keeps the package lightweight while preserving the result context needed for manuscript review.
 
-## 11. Data And Model Availability
+## 11. Supplementary Figure R Scripts
+
+Five R scripts under `scripts/` redraw the supplementary figures from repository tables. They are intended for manuscript figure polishing and reviewer-facing traceability, not for normal package operation. The Python command `make reproduce-legacy` should be run first so that the retained source tables under `data/results/reproducible_legacy/tables/` are up to date.
+
+Required R packages:
+
+```r
+install.packages(c("ggplot2", "readr", "dplyr", "pheatmap", "patchwork"))
+```
+
+Run all R figure scripts:
+
+```bash
+make reproduce-legacy
+make supplement-figures-r
+```
+
+Script mapping:
+
+| Supplementary figure | Script | Default source table | Default output |
+| --- | --- | --- | --- |
+| Figure S1 | `scripts/render_FigS1_quantitative_reference.R` | `data/raw/mpravae/generated_prediction_results.csv` | `docs/fig/FigS1_quantitative_reference.png` and `.pdf` |
+| Figure S2 | `scripts/render_FigS2_expression_heatmap.R` | `data/results/reproducible_legacy/tables/expression_heatmap_source.csv` | `docs/fig/FigS2_expression_heatmap.png` and `.pdf` |
+| Figure S3 | `scripts/render_FigS3_dnabert_motif_summary.R` | `data/results/reproducible_legacy/tables/dnabert_motif_top20.csv` | `docs/fig/FigS3_dnabert_motif_summary.png` and `.pdf` |
+| Figure S4 | `scripts/render_FigS4_kmer_distribution.R` | `data/results/reproducible_legacy/tables/kmer_frequency_comparison.csv` | `docs/fig/FigS4_kmer_distribution.png` and `.pdf` |
+| Figure S5 | `scripts/render_FigS5_design_candidate_summary.R` | `data/results/reproducible_legacy/tables/design_candidate_summary.csv` | `docs/fig/FigS5_design_candidate_summary.png` and `.pdf` |
+
+Each script can also be run manually with optional arguments:
+
+```bash
+Rscript scripts/render_FigS4_kmer_distribution.R \
+  data/results/reproducible_legacy/tables/kmer_frequency_comparison.csv \
+  docs/fig
+```
+
+The first argument is the input table and the second argument is the output directory. If both are omitted, the script uses the repository-default paths above.
+
+## 12. Data And Model Availability
 
 Bundled data layers:
 
@@ -287,7 +324,7 @@ data/summary.json
 data/external/external_resources.tsv
 ```
 
-## 12. Testing
+## 13. Testing
 
 Run:
 
@@ -306,7 +343,7 @@ The test suite covers:
 - legacy-derived adapter behavior
 - figure export utilities
 
-## 13. Recommended Wording
+## 14. Recommended Wording
 
 Use:
 
@@ -323,6 +360,6 @@ Avoid:
 - all weights are bundled
 - state-of-the-art promoter predictor
 
-## 14. Citation
+## 15. Citation
 
 Citation metadata is provided in `CITATION.cff`. For publication, cite the Application Note and the archived repository release.

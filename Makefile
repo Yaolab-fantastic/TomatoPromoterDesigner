@@ -1,6 +1,6 @@
 PYTHON ?= python
 
-.PHONY: install install-dev test demo validate package legacy-figures reproduce-legacy sync-data clean
+.PHONY: install install-dev test demo validate package legacy-figures reproduce-legacy supplement-figures-r sync-data clean
 
 install:
 	$(PYTHON) -m pip install -e .
@@ -22,6 +22,13 @@ legacy-figures:
 
 reproduce-legacy:
 	PYTHONPATH=src $(PYTHON) scripts/reproduce_legacy_outputs.py
+
+supplement-figures-r:
+	Rscript scripts/render_FigS1_quantitative_reference.R
+	Rscript scripts/render_FigS2_expression_heatmap.R
+	Rscript scripts/render_FigS3_dnabert_motif_summary.R
+	Rscript scripts/render_FigS4_kmer_distribution.R
+	Rscript scripts/render_FigS5_design_candidate_summary.R
 
 sync-data:
 	PYTHONPATH=src $(PYTHON) scripts/sync_repository_data.py

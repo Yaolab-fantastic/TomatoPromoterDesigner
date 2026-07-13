@@ -179,6 +179,41 @@ Outputs are written to:
 data/results/reproducible_legacy/
 ```
 
+## Rebuild Supplementary Figures With R
+
+The repository includes five R scripts that redraw the supplementary figures from retained source tables. Use them when revising figure style, regenerating PDF versions, or confirming that the submitted panels are traceable to repository data.
+
+Required R packages:
+
+```r
+install.packages(c("ggplot2", "readr", "dplyr", "pheatmap", "patchwork"))
+```
+
+Run all supplementary figure scripts:
+
+```bash
+make reproduce-legacy
+make supplement-figures-r
+```
+
+The scripts write PNG and PDF files to `docs/fig/` by default:
+
+| Script | Default input | Default output |
+| --- | --- | --- |
+| `scripts/render_FigS1_quantitative_reference.R` | `data/raw/mpravae/generated_prediction_results.csv` | `docs/fig/FigS1_quantitative_reference.png` |
+| `scripts/render_FigS2_expression_heatmap.R` | `data/results/reproducible_legacy/tables/expression_heatmap_source.csv` | `docs/fig/FigS2_expression_heatmap.png` |
+| `scripts/render_FigS3_dnabert_motif_summary.R` | `data/results/reproducible_legacy/tables/dnabert_motif_top20.csv` | `docs/fig/FigS3_dnabert_motif_summary.png` |
+| `scripts/render_FigS4_kmer_distribution.R` | `data/results/reproducible_legacy/tables/kmer_frequency_comparison.csv` | `docs/fig/FigS4_kmer_distribution.png` |
+| `scripts/render_FigS5_design_candidate_summary.R` | `data/results/reproducible_legacy/tables/design_candidate_summary.csv` | `docs/fig/FigS5_design_candidate_summary.png` |
+
+Each script also accepts an optional input table and output directory:
+
+```bash
+Rscript scripts/render_FigS2_expression_heatmap.R \
+  data/results/reproducible_legacy/tables/expression_heatmap_source.csv \
+  docs/fig
+```
+
 ## Main Commands
 
 | Command | Purpose |

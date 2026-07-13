@@ -6,3 +6,4 @@ recursive-include data *
 recursive-include docs *.tex *.bib *.md
 recursive-include docs/fig *.png
 recursive-include examples *.fasta
+recursive-include scripts *.py *.R
