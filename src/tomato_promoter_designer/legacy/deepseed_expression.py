@@ -3,6 +3,7 @@ from __future__ import annotations
 import math
 import os
 import sys
+import sysconfig
 from pathlib import Path
 
 import torch
@@ -21,6 +22,14 @@ def _default_models_dir() -> Path:
     repo_models = _repo_root() / "models"
     if repo_models.exists():
         return repo_models
+    installed_models = (
+        Path(sysconfig.get_path("data"))
+        / "share"
+        / "tomato-promoter-designer"
+        / "models"
+    )
+    if installed_models.exists():
+        return installed_models
     return Path.cwd() / "models"
 
 
@@ -29,14 +38,14 @@ DEFAULT_DEEPSEED_CHECKPOINT = DEFAULT_DEEPSEED_MODULE_DIR / "165_mpra_expr_dense
 
 
 def encode_sequence(sequence: str) -> torch.Tensor:
-    """Encode a DNA sequence as a [4, L] one-hot tensor for the legacy predictor."""
+    """Encode a DNA sequence as a [4, L] one-hot tensor for the model adapter."""
 
     mapping = {"A": 0, "T": 1, "C": 2, "G": 3}
     encoded = torch.zeros((4, len(sequence)), dtype=torch.float32)
     for idx, base in enumerate(sequence.upper()):
         if base not in mapping:
             raise ValueError(
-                "DeepSeed legacy predictor only supports unambiguous A/C/G/T input. "
+                "DeepSeed predictor only supports unambiguous A/C/G/T input. "
                 f"Found unsupported base {base!r} at position {idx}."
             )
         encoded[mapping[base], idx] = 1.0
@@ -44,7 +53,7 @@ def encode_sequence(sequence: str) -> torch.Tensor:
 
 
 class DeepSeedScalarExpressionPredictor:
-    """Adapter around the legacy deepseed DenseLSTM checkpoint."""
+    """Adapter around the project deepseed DenseLSTM checkpoint."""
 
     backend_name = "deepseed_denselstm_scalar"
 

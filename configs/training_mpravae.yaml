@@ -1,0 +1,22 @@
+# Minimal MpraVAE training configuration.
+# The output checkpoint is compatible with:
+#   tomato-promoter-designer predict-mpravae --checkpoint <path>
+#   tomato-promoter-designer design-mpravae --checkpoint <path>
+
+input_csv: data/raw/mpravae/training_set.csv
+sequence_column: realB
+tissue_columns: [expr_tissue_1, expr_tissue_2, expr_tissue_3, expr_tissue_4]
+output_checkpoint: models/mpravae/trained_mpravae_model.pth
+metrics_json: models/mpravae/trained_mpravae_metrics.json
+sequence_length: 165
+latent_dim: 64
+batch_size: 64
+epochs: 20
+learning_rate: 0.001
+validation_fraction: 0.1
+seed: 42
+reconstruction_weight: 1.0
+prediction_weight: 1.0
+kl_weight: 0.001
+max_rows: null
+device: cpu

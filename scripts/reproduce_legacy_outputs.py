@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import csv
 import math
-import shutil
 from collections import Counter, defaultdict
 from itertools import product
 from pathlib import Path
@@ -11,7 +10,6 @@ from PIL import Image, ImageDraw, ImageFont
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
-WORKSPACE_ROOT = REPO_ROOT.parents[1]
 OUTPUT_ROOT = REPO_ROOT / "data" / "results" / "reproducible_legacy"
 FIGURE_DIR = OUTPUT_ROOT / "figures"
 TABLE_DIR = OUTPUT_ROOT / "tables"
@@ -25,38 +23,14 @@ TISSUES = [
 
 
 SOURCE_FILES = {
-    "training_set": (
-        WORKSPACE_ROOT / "MpraVAE" / "data" / "vaedata" / "training_set.csv",
-        REPO_ROOT / "data" / "raw" / "mpravae" / "training_set.csv",
-    ),
-    "designed_promoters_200": (
-        WORKSPACE_ROOT / "MpraVAE" / "results" / "designed_promoters200.csv",
-        REPO_ROOT / "data" / "raw" / "mpravae" / "designed_promoters200.csv",
-    ),
-    "designed_promoters_20": (
-        WORKSPACE_ROOT / "MpraVAE" / "results" / "designed_promoters.csv",
-        REPO_ROOT / "data" / "raw" / "mpravae" / "designed_promoters.csv",
-    ),
-    "prediction_reference": (
-        WORKSPACE_ROOT / "MpraVAE" / "results" / "generated_prediction_results.csv",
-        REPO_ROOT / "data" / "raw" / "mpravae" / "generated_prediction_results.csv",
-    ),
-    "random_promoters": (
-        WORKSPACE_ROOT / "MpraVAE" / "data" / "random_promoters_200.csv",
-        REPO_ROOT / "data" / "raw" / "mpravae" / "random_promoters_200.csv",
-    ),
-    "edit_pairs": (
-        WORKSPACE_ROOT / "MpraVAE" / "data" / "bianjijuli" / "designed_promoters200.csv",
-        REPO_ROOT / "data" / "raw" / "mpravae" / "designed_promoters200_pairs.csv",
-    ),
-    "deepseed_training_log": (
-        WORKSPACE_ROOT / "deepseed" / "Predictor" / "results1" / "training_log165_mpra_expr_denselstm.csv",
-        REPO_ROOT / "data" / "raw" / "deepseed" / "training_log165_mpra_expr_denselstm.csv",
-    ),
-    "dnabert_motif_summary": (
-        WORKSPACE_ROOT / "DNABERT" / "motif" / "result" / "6-2" / "motif_summary.csv",
-        REPO_ROOT / "data" / "processed" / "dnabert_legacy" / "motif_summary.csv",
-    ),
+    "training_set": REPO_ROOT / "data" / "raw" / "mpravae" / "training_set.csv",
+    "designed_promoters_200": REPO_ROOT / "data" / "raw" / "mpravae" / "designed_promoters200.csv",
+    "designed_promoters_20": REPO_ROOT / "data" / "raw" / "mpravae" / "designed_promoters.csv",
+    "prediction_reference": REPO_ROOT / "data" / "raw" / "mpravae" / "generated_prediction_results.csv",
+    "random_promoters": REPO_ROOT / "data" / "raw" / "mpravae" / "random_promoters_200.csv",
+    "edit_pairs": REPO_ROOT / "data" / "raw" / "mpravae" / "designed_promoters200_pairs.csv",
+    "deepseed_training_log": REPO_ROOT / "data" / "raw" / "deepseed" / "training_log165_mpra_expr_denselstm.csv",
+    "dnabert_motif_summary": REPO_ROOT / "data" / "processed" / "dnabert_legacy" / "motif_summary.csv",
 }
 
 
@@ -115,19 +89,11 @@ def _write_csv(path: Path, rows: list[dict[str, object]], fieldnames: list[str] 
         writer.writerows(rows)
 
 
-def _copy_if_needed(source: Path, target: Path) -> Path:
-    if target.exists():
-        return target
-    if source.exists():
-        target.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copy2(source, target)
-        return target
-    return target
-
-
 def _resolve_source(key: str) -> Path:
-    source, target = SOURCE_FILES[key]
-    return _copy_if_needed(source, target)
+    source = SOURCE_FILES[key]
+    if not source.exists():
+        raise FileNotFoundError(f"Required repository source is missing: {_rel(source)}")
+    return source
 
 
 def _mean(values: list[float]) -> float:
@@ -173,10 +139,10 @@ def build_expression_heatmap() -> tuple[Path, Path]:
             {
                 "sequence_id": f"training_{index:05d}",
                 "sequence": row.get("realB", ""),
-                "expr_root": values[0][2],
-                "expr_stem": values[1][2],
-                "expr_leaf": values[2][2],
-                "expr_fruit": values[3][2],
+                "score_root": values[0][2],
+                "score_stem": values[1][2],
+                "score_leaf": values[2][2],
+                "score_fruit": values[3][2],
                 "preferred_tissue": best[1],
                 "target_margin": margin,
             }
@@ -191,7 +157,7 @@ def build_expression_heatmap() -> tuple[Path, Path]:
     table_path = TABLE_DIR / "expression_heatmap_source.csv"
     _write_csv(table_path, selected)
 
-    values = [float(row[key]) for row in selected for key in ("expr_root", "expr_stem", "expr_leaf", "expr_fruit")]
+    values = [float(row[key]) for row in selected for key in ("score_root", "score_stem", "score_leaf", "score_fruit")]
     vmin, vmax = min(values), max(values)
     x0, y0 = 340, 210
     cell_w, cell_h = 210, 18
@@ -218,7 +184,7 @@ def build_expression_heatmap() -> tuple[Path, Path]:
         pref = str(row["preferred_tissue"])
         draw.rounded_rectangle((228, y - 1, 310, y + cell_h), radius=7, fill=tissue_colors[pref])
         draw.text((244, y + 2), pref, font=FONT_TINY, fill=(255, 255, 255))
-        for col, key in enumerate(("expr_root", "expr_stem", "expr_leaf", "expr_fruit")):
+        for col, key in enumerate(("score_root", "score_stem", "score_leaf", "score_fruit")):
             x = x0 + col * cell_w
             value = float(row[key])
             t = (value - vmin) / max(vmax - vmin, 1e-9)
@@ -244,8 +210,6 @@ def build_motif_summary() -> tuple[Path, Path]:
     parsed: list[dict[str, object]] = []
     tfbs_dirs = [
         REPO_ROOT / "data" / "raw" / "dnabert" / "tfbs_assets",
-        WORKSPACE_ROOT / "DNABERT" / "motif" / "result" / "6-2",
-        WORKSPACE_ROOT / "DNABERT" / "motif" / "result" / "6-3",
     ]
     for row in rows:
         try:
@@ -277,7 +241,7 @@ def build_motif_summary() -> tuple[Path, Path]:
     draw = ImageDraw.Draw(image)
     draw.text((54, 38), "Supplementary Figure S3", font=FONT_PANEL, fill=COLORS["ink"])
     draw.text((54, 78), "DNABERT-derived retained motif instances", font=FONT_TITLE, fill=COLORS["ink"])
-    draw.text((54, 126), "Top retained motifs are reconstructed from motif_summary.csv generated by the legacy DNABERT motif workflow.", font=FONT_SMALL, fill=COLORS["muted"])
+    draw.text((54, 126), "Top retained motifs are reconstructed from motif_summary.csv generated by DNABERT-derived post-processing.", font=FONT_SMALL, fill=COLORS["muted"])
 
     max_count = max(int(row["num_instances"]) for row in top) if top else 1
     x0, y0 = 250, 180
@@ -420,36 +384,49 @@ def build_design_candidate_summary() -> tuple[Path, Path]:
 def build_prediction_reference() -> tuple[Path, Path]:
     rows = _read_csv(_resolve_source("prediction_reference"))
     predicted: list[float] = []
-    measured: list[float] = []
+    true_values: list[float] = []
     for row in rows:
         try:
             predicted.append(float(row["Predicted_Expr"]))
-            measured.append(float(row["True_Expr"]))
+            true_values.append(float(row["True_Expr"]))
         except (KeyError, ValueError):
             continue
-    r = _pearson(predicted, measured)
+    r = _pearson(predicted, true_values)
     stats_path = TABLE_DIR / "prediction_reference_stats.csv"
-    _write_csv(stats_path, [{"n_pairs": len(predicted), "pearson_r": r, "source_file": _rel(_resolve_source("prediction_reference"))}])
+    _write_csv(
+        stats_path,
+        [
+            {
+                "source_file": _rel(_resolve_source("prediction_reference")),
+                "predicted_column": "Predicted_Expr",
+                "true_column": "True_Expr",
+                "source_rows": len(rows),
+                "valid_pairs": len(predicted),
+                "excluded_rows": len(rows) - len(predicted),
+                "pearson_r": r,
+            }
+        ],
+    )
 
     width, height = 900, 780
     image = Image.new("RGB", (width, height), COLORS["bg"])
     draw = ImageDraw.Draw(image)
     draw.text((54, 38), "Supplementary Figure S6", font=FONT_PANEL, fill=COLORS["ink"])
     draw.text((54, 78), "Retained quantitative prediction reference", font=FONT_TITLE, fill=COLORS["ink"])
-    draw.text((54, 126), "Predicted and measured scalar-expression pairs retained from the earlier modeling workflow.", font=FONT_SMALL, fill=COLORS["muted"])
+    draw.text((54, 126), "Predicted and true scalar-expression pairs retained from the project modeling workflow.", font=FONT_SMALL, fill=COLORS["muted"])
     x0, y0, plot_w, plot_h = 140, 190, 600, 460
     draw.rectangle((x0, y0, x0 + plot_w, y0 + plot_h), outline=COLORS["grid"], width=2)
-    mn, mx = min(predicted + measured), max(predicted + measured)
+    mn, mx = min(predicted + true_values), max(predicted + true_values)
     span = max(mx - mn, 1e-9)
     draw.line((x0, y0 + plot_h, x0 + plot_w, y0), fill=COLORS["grid"], width=2)
-    for p, t in zip(predicted, measured):
+    for p, t in zip(predicted, true_values):
         px = x0 + int((p - mn) / span * plot_w)
         py = y0 + plot_h - int((t - mn) / span * plot_h)
         draw.point((px, py), fill=COLORS["red"])
     draw.text((x0 + plot_w - 140, y0 + 22), f"Pearson r={r:.3f}", font=FONT_SMALL, fill=COLORS["muted"])
     draw.text((x0 + plot_w - 140, y0 + 48), f"n={len(predicted)}", font=FONT_SMALL, fill=COLORS["muted"])
     draw.text((x0 + 200, y0 + plot_h + 38), "predicted expression", font=FONT_SMALL, fill=COLORS["muted"])
-    draw.text((x0 - 92, y0 + 200), "measured expression", font=FONT_SMALL, fill=COLORS["muted"])
+    draw.text((x0 - 92, y0 + 200), "true expression", font=FONT_SMALL, fill=COLORS["muted"])
     figure_path = _save_image(image, FIGURE_DIR / "figS6_prediction_reference_scatter.png")
     return stats_path, figure_path
 
@@ -582,7 +559,7 @@ def main() -> int:
         ("dnabert_motif_top20", build_motif_summary, "dnabert_motif_summary", "dnabert_find_motifs", "Top retained motifs reconstructed from DNABERT motif_summary.csv."),
         ("kmer_similarity", build_kmer_comparison, "designed_promoters_200", "mpravae_verify_kmer", "All/proximal/distal 4-mer comparison using 200 retained designs."),
         ("design_candidate_summary", build_design_candidate_summary, "designed_promoters_200", "mpravae_design", "Design-score and modification summary using 200 retained designs."),
-        ("prediction_reference", build_prediction_reference, "prediction_reference", "mpravae_transformer_vae", "Retained predicted/measured scalar-expression reference."),
+        ("prediction_reference", build_prediction_reference, "prediction_reference", "mpravae_transformer_vae", "Retained predicted/true scalar-expression reference."),
         ("edit_distance", build_edit_distance_summary, "edit_pairs", "mpravae_verify_edit_distance", "Edit-distance summary recomputed from retained design pairs."),
         ("deepseed_training", build_deepseed_training_summary, "deepseed_training_log", "deepseed_predictor_training", "DeepSeed training trace redrawn from retained CSV log."),
     ]
@@ -610,7 +587,7 @@ def main() -> int:
             }
         )
     write_manifest(entries)
-    print(f"Wrote reproducible legacy output pack: {_rel(OUTPUT_ROOT)}")
+    print(f"Wrote reproducible retained result pack: {_rel(OUTPUT_ROOT)}")
     print(f"Manifest: {_rel(OUTPUT_ROOT / 'manifest.csv')}")
     return 0
 

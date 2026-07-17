@@ -55,13 +55,27 @@ def _display_design_status(status: str) -> str:
     return labels.get(status, status.replace("_", " "))
 
 
+def _score_key(row: dict[str, str], tissue: str) -> str:
+    score_key = f"score_{tissue}"
+    if score_key in row:
+        return score_key
+    expr_key = f"expr_{tissue}"
+    if expr_key in row:
+        return expr_key
+    raise KeyError(f"Missing score column for tissue: {tissue}")
+
+
+def _has_tissue_scores(row: dict[str, str]) -> bool:
+    return all(f"score_{tissue}" in row or f"expr_{tissue}" in row for tissue in ("root", "stem", "leaf", "fruit"))
+
+
 def render_prediction_heatmap(rows: list[dict[str, str]], output_path: str | Path) -> None:
     tissues = ("root", "stem", "leaf", "fruit")
     values = [
-        float(row[f"expr_{tissue}"])
+        float(row[_score_key(row, tissue)])
         for row in rows
         for tissue in tissues
-        if row.get(f"expr_{tissue}") not in (None, "")
+        if row.get(_score_key(row, tissue)) not in (None, "")
     ]
     minimum = min(values) if values else 0.0
     maximum = max(values) if values else 1.0
@@ -73,8 +87,8 @@ def render_prediction_heatmap(rows: list[dict[str, str]], output_path: str | Pat
     cell_h = 38
 
     lines = _svg_header(width, height)
-    lines.append('<text x="40" y="42" font-size="24" font-family="Arial, sans-serif" fill="#1d2a2f">Predicted Tissue Activity Heatmap</text>')
-    lines.append('<text x="40" y="66" font-size="12" font-family="Arial, sans-serif" fill="#5b666b">Generated from prediction results for package reports and manuscript figures.</text>')
+    lines.append('<text x="40" y="42" font-size="24" font-family="Arial, sans-serif" fill="#1d2a2f">Tissue-associated Score Heatmap</text>')
+    lines.append('<text x="40" y="66" font-size="12" font-family="Arial, sans-serif" fill="#5b666b">Generated from tissue-score results for package reports and manuscript figures.</text>')
 
     for column_index, tissue in enumerate(tissues):
         x = left + column_index * cell_w
@@ -93,7 +107,7 @@ def render_prediction_heatmap(rows: list[dict[str, str]], output_path: str | Pat
             f'<text x="42" y="{y + 40}" font-size="11" font-family="Arial, sans-serif" fill="#7a5c2e">preferred: {_escape(preferred)}</text>'
         )
         for column_index, tissue in enumerate(tissues):
-            value = float(row[f"expr_{tissue}"])
+            value = float(row[_score_key(row, tissue)])
             x = left + column_index * cell_w
             fill = _linear_color(value, minimum, maximum)
             lines.append(
@@ -115,7 +129,7 @@ def render_design_summary(rows: list[dict[str, str]], output_path: str | Path) -
     top = 100
     plot_width = 620
     max_gap = max(
-        abs(float(row["expr_fruit"]) - max(float(row["expr_root"]), float(row["expr_stem"]), float(row["expr_leaf"])))
+        abs(float(row[_score_key(row, "fruit")]) - max(float(row[_score_key(row, "root")]), float(row[_score_key(row, "stem")]), float(row[_score_key(row, "leaf")])))
         for row in rows
     ) if rows else 1.0
     max_gap = max(max_gap, 0.1)
@@ -136,11 +150,11 @@ def render_design_summary(rows: list[dict[str, str]], output_path: str | Path) -
     for row_index, row in enumerate(rows):
         y = top + row_index * 56
         target_tissue = row["target_tissue"]
-        target_value = float(row[f"expr_{target_tissue}"])
+        target_value = float(row[_score_key(row, target_tissue)])
         competitor = max(
-            float(row[column])
-            for column in ("expr_root", "expr_stem", "expr_leaf", "expr_fruit")
-            if column != f"expr_{target_tissue}"
+            float(row[_score_key(row, tissue)])
+            for tissue in ("root", "stem", "leaf", "fruit")
+            if tissue != target_tissue
         )
         gap = target_value - competitor
         bar_width = abs(gap) / max_gap * (plot_width / 2 - 16)
@@ -227,12 +241,12 @@ def export_svg_figures(
     first_row = rows[0]
     generated: list[str] = []
 
-    if {"expr_root", "expr_stem", "expr_leaf", "expr_fruit", "preferred_tissue"}.issubset(first_row):
+    if _has_tissue_scores(first_row) and "preferred_tissue" in first_row:
         output_path = output_dir / "prediction_heatmap.svg"
         render_prediction_heatmap(rows, output_path)
         figure_type = "prediction"
         generated.append(output_path.name)
-    elif {"target_tissue", "designed_sequence", "expr_root", "expr_stem", "expr_leaf", "expr_fruit"}.issubset(first_row):
+    elif {"target_tissue", "designed_sequence"}.issubset(first_row) and _has_tissue_scores(first_row):
         output_path = output_dir / "design_summary.svg"
         render_design_summary(rows, output_path)
         figure_type = "design"

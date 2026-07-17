@@ -8,8 +8,8 @@ from tomato_promoter_designer.io.schema import PredictionResult, SequenceRecord
 class HeuristicExpressionPredictor:
     """A deterministic baseline scorer.
 
-    This is intentionally simple: it keeps the software runnable while the
-    trained tissue predictor is being integrated.
+    This transparent operational baseline keeps the core workflow runnable
+    without invoking a checkpoint-backed model.
     """
 
     _motif_weights = {
@@ -46,9 +46,9 @@ class HeuristicExpressionPredictor:
         return PredictionResult(
             sequence_id=record.sequence_id,
             sequence=seq,
-            expr_root=scores["root"],
-            expr_stem=scores["stem"],
-            expr_leaf=scores["leaf"],
-            expr_fruit=scores["fruit"],
+            score_root=scores["root"],
+            score_stem=scores["stem"],
+            score_leaf=scores["leaf"],
+            score_fruit=scores["fruit"],
             preferred_tissue=preferred_tissue,
         )

@@ -10,6 +10,26 @@ import numpy as np
 
 
 class TestCLI(unittest.TestCase):
+    def test_copy_example_command_writes_bundled_fasta(self) -> None:
+        repo_root = Path(__file__).resolve().parents[1]
+        env = os.environ.copy()
+        env["PYTHONPATH"] = str(repo_root / "src")
+        with tempfile.TemporaryDirectory() as temp_dir:
+            output_path = Path(temp_dir) / "demo_input.fasta"
+            cmd = [
+                sys.executable,
+                "-m",
+                "tomato_promoter_designer.cli",
+                "copy-example",
+                "--output",
+                str(output_path),
+            ]
+            subprocess.run(cmd, capture_output=True, text=True, env=env, check=True)
+            self.assertEqual(
+                output_path.read_text(encoding="utf-8"),
+                (repo_root / "examples" / "demo_input.fasta").read_text(encoding="utf-8"),
+            )
+
     def test_validate_input_command(self) -> None:
         repo_root = Path(__file__).resolve().parents[1]
         env = os.environ.copy()
@@ -68,7 +88,7 @@ class TestCLI(unittest.TestCase):
             sys.executable,
             "-m",
             "tomato_promoter_designer.cli",
-            "predict-legacy-deepseed",
+            "predict-deepseed",
             "--input",
             str(fasta_path),
             "--output",
@@ -99,7 +119,7 @@ class TestCLI(unittest.TestCase):
             sys.executable,
             "-m",
             "tomato_promoter_designer.cli",
-            "predict-legacy-mpravae",
+            "predict-mpravae",
             "--input",
             str(fasta_path),
             "--output",
@@ -128,7 +148,7 @@ class TestCLI(unittest.TestCase):
             sys.executable,
             "-m",
             "tomato_promoter_designer.cli",
-            "design-legacy-mpravae",
+            "design-mpravae",
             "--input",
             str(fasta_path),
             "--target",
@@ -181,7 +201,7 @@ class TestCLI(unittest.TestCase):
                 sys.executable,
                 "-m",
                 "tomato_promoter_designer.cli",
-                "annotate-legacy-dnabert",
+                "annotate-dnabert",
                 "--dev-tsv",
                 str(dev_tsv),
                 "--atten-npy",
@@ -211,7 +231,7 @@ class TestCLI(unittest.TestCase):
             input_csv = temp_path / "predict.csv"
             output_dir = temp_path / "figures"
             input_csv.write_text(
-                "sequence_id,sequence,expr_root,expr_stem,expr_leaf,expr_fruit,preferred_tissue\n"
+                "sequence_id,sequence,score_root,score_stem,score_leaf,score_fruit,preferred_tissue\n"
                 "seq1,ACGT,1.0,2.0,1.5,0.8,stem\n",
                 encoding="utf-8",
             )
@@ -241,7 +261,7 @@ class TestCLI(unittest.TestCase):
                 sys.executable,
                 "-m",
                 "tomato_promoter_designer.cli",
-                "legacy-figures",
+                "model-figures",
                 "--output-dir",
                 str(output_dir),
                 "--mpravae-loss-history",

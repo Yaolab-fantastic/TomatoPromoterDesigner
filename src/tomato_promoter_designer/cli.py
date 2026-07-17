@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import shutil
 from pathlib import Path
 
 from tomato_promoter_designer.io.csv import write_dict_rows
@@ -22,6 +23,7 @@ from tomato_promoter_designer.pipeline.predict import run_prediction
 from tomato_promoter_designer.pipeline.figures import run_figure_export
 from tomato_promoter_designer.pipeline.legacy_figures import run_legacy_figure_export
 from tomato_promoter_designer.pipeline.report import build_report
+from tomato_promoter_designer.resources import find_example
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -36,8 +38,9 @@ def build_parser() -> argparse.ArgumentParser:
     annotate.add_argument("--output", required=True, help="Output CSV path.")
 
     annotate_dnabert = subparsers.add_parser(
-        "annotate-legacy-dnabert",
-        help="Run the migrated DNABERT attention-to-motif post-processing workflow.",
+        "annotate-dnabert",
+        aliases=["annotate-legacy-dnabert"],
+        help="Run the DNABERT attention-to-motif post-processing workflow.",
     )
     annotate_dnabert.add_argument("--dev-tsv", required=True, help="DNABERT dev.tsv file with k-mer sequences and labels.")
     annotate_dnabert.add_argument("--atten-npy", required=True, help="Attention score array exported by DNABERT.")
@@ -55,29 +58,30 @@ def build_parser() -> argparse.ArgumentParser:
     predict.add_argument("--output", required=True, help="Output CSV path.")
 
     predict_mpravae = subparsers.add_parser(
-        "predict-legacy-mpravae",
-        help="Run the migrated MpraVAE tomato four-tissue predictor.",
+        "predict-mpravae",
+        aliases=["predict-legacy-mpravae"],
+        help="Run the bundled MpraVAE tomato four-tissue scorer.",
     )
     predict_mpravae.add_argument("--input", required=True, help="Input FASTA file.")
     predict_mpravae.add_argument("--output", required=True, help="Output CSV path.")
     predict_mpravae.add_argument("--checkpoint", required=False, help="Optional path to an MpraVAE tomato checkpoint.")
 
     predict_legacy = subparsers.add_parser(
-        "predict-legacy",
-        aliases=["predict-legacy-deepseed"],
-        help="Run the migrated legacy deepseed scalar-expression predictor.",
+        "predict-deepseed",
+        aliases=["predict-legacy", "predict-legacy-deepseed"],
+        help="Run the bundled deepseed scalar-expression predictor.",
     )
     predict_legacy.add_argument("--input", required=True, help="Input FASTA file.")
     predict_legacy.add_argument("--output", required=True, help="Output CSV path.")
     predict_legacy.add_argument(
         "--checkpoint",
         required=False,
-        help="Optional path to a legacy deepseed checkpoint.",
+        help="Optional path to a deepseed checkpoint.",
     )
     predict_legacy.add_argument(
         "--module-dir",
         required=False,
-        help="Optional directory containing the legacy deepseed SeqRegressionModel.py definition.",
+        help="Optional directory containing the deepseed SeqRegressionModel.py definition.",
     )
 
     design = subparsers.add_parser(
@@ -91,8 +95,9 @@ def build_parser() -> argparse.ArgumentParser:
     design.add_argument("--output", required=True, help="Output CSV path.")
 
     design_mpravae = subparsers.add_parser(
-        "design-legacy-mpravae",
-        help="Run the migrated MpraVAE latent-space design workflow.",
+        "design-mpravae",
+        aliases=["design-legacy-mpravae"],
+        help="Run the bundled MpraVAE latent-space design workflow.",
     )
     design_mpravae.add_argument("--input", required=True, help="Input FASTA file.")
     design_mpravae.add_argument("--target", required=True, choices=["root", "stem", "leaf", "fruit"])
@@ -111,8 +116,9 @@ def build_parser() -> argparse.ArgumentParser:
     figures.add_argument("--top-n", type=int, default=15, help="Maximum number of motif rows to render for motif summary figures.")
 
     legacy_figures = subparsers.add_parser(
-        "legacy-figures",
-        help="Export legacy paper-style SVG figures from migrated deepseed and MpraVAE result files.",
+        "model-figures",
+        aliases=["legacy-figures"],
+        help="Export model-resource SVG figures from deepseed and MpraVAE result files.",
     )
     legacy_figures.add_argument("--output-dir", required=True, help="Output directory for legacy SVG figure files.")
     legacy_figures.add_argument("--mpravae-loss-history", required=False, help="Optional MpraVAE loss_history.csv path.")
@@ -131,12 +137,22 @@ def build_parser() -> argparse.ArgumentParser:
     validate = subparsers.add_parser("validate-input", help="Validate FASTA content and print a small summary.")
     validate.add_argument("--input", required=True, help="Input FASTA file.")
 
+    copy_example = subparsers.add_parser("copy-example", help="Copy the bundled demonstration FASTA to a local path.")
+    copy_example.add_argument("--output", required=True, help="Destination FASTA path.")
+
     return parser
 
 
 def main(argv: list[str] | None = None) -> int:
     parser = build_parser()
     args = parser.parse_args(argv)
+
+    if args.command == "copy-example":
+        output = Path(args.output)
+        output.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(find_example(), output)
+        print(json.dumps({"example": str(output)}, indent=2))
+        return 0
 
     if args.command == "validate-input":
         records = read_fasta(args.input)
@@ -148,7 +164,7 @@ def main(argv: list[str] | None = None) -> int:
         print(json.dumps(summary, indent=2))
         return 0
 
-    if args.command == "annotate-legacy-dnabert":
+    if args.command in {"annotate-dnabert", "annotate-legacy-dnabert"}:
         metadata = run_legacy_dnabert_motif_annotation(
             dev_tsv_path=args.dev_tsv,
             attention_scores_path=args.atten_npy,
@@ -161,7 +177,18 @@ def main(argv: list[str] | None = None) -> int:
         print(json.dumps(metadata, indent=2))
         return 0
 
-    if args.command in {"annotate", "predict", "predict-legacy", "predict-legacy-deepseed", "predict-legacy-mpravae", "design", "design-legacy-mpravae"}:
+    if args.command in {
+        "annotate",
+        "predict",
+        "predict-deepseed",
+        "predict-legacy",
+        "predict-legacy-deepseed",
+        "predict-mpravae",
+        "predict-legacy-mpravae",
+        "design",
+        "design-mpravae",
+        "design-legacy-mpravae",
+    }:
         records = read_fasta(args.input)
 
     if args.command == "annotate":
@@ -186,12 +213,12 @@ def main(argv: list[str] | None = None) -> int:
         write_dict_rows([item.to_dict() for item in predictions], args.output)
         return 0
 
-    if args.command == "predict-legacy-mpravae":
+    if args.command in {"predict-mpravae", "predict-legacy-mpravae"}:
         predictions = run_legacy_mpravae_prediction(records, checkpoint_path=args.checkpoint)
         write_dict_rows([item.to_dict() for item in predictions], args.output)
         return 0
 
-    if args.command in {"predict-legacy", "predict-legacy-deepseed"}:
+    if args.command in {"predict-deepseed", "predict-legacy", "predict-legacy-deepseed"}:
         predictions = run_legacy_prediction(records, checkpoint_path=args.checkpoint, module_dir=args.module_dir)
         write_dict_rows([item.to_dict() for item in predictions], args.output)
         return 0
@@ -201,7 +228,7 @@ def main(argv: list[str] | None = None) -> int:
         write_dict_rows([item.to_dict() for item in designs], args.output)
         return 0
 
-    if args.command == "design-legacy-mpravae":
+    if args.command in {"design-mpravae", "design-legacy-mpravae"}:
         designs = run_legacy_mpravae_design(
             records,
             target_tissue=args.target,
@@ -222,7 +249,7 @@ def main(argv: list[str] | None = None) -> int:
         print(json.dumps(manifest, indent=2))
         return 0
 
-    if args.command == "legacy-figures":
+    if args.command in {"model-figures", "legacy-figures"}:
         manifest = run_legacy_figure_export(
             output_dir=args.output_dir,
             mpravae_loss_history=args.mpravae_loss_history,

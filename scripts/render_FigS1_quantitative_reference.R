@@ -23,6 +23,7 @@ output_pdf <- file.path(output_dir, "FigS1_quantitative_reference.pdf")
 
 df <- read_csv(input_file, show_col_types = FALSE)
 df <- df[complete.cases(df[, c("Predicted_Expr", "True_Expr")]), ]
+df <- df[is.finite(df$Predicted_Expr) & is.finite(df$True_Expr), ]
 
 n_pairs <- nrow(df)
 pearson_r <- cor(df$Predicted_Expr, df$True_Expr, method = "pearson")
@@ -42,7 +43,7 @@ p <- ggplot(df, aes(x = True_Expr, y = Predicted_Expr)) +
     color = "#333333"
   ) +
   labs(
-    x = "Measured scalar-expression value",
+    x = "True scalar-expression value",
     y = "Predicted scalar-expression value"
   ) +
   theme_classic(base_size = 14) +

@@ -1,9 +1,11 @@
 include README.md
 include LICENSE
 include CITATION.cff
+include RESOURCE_LICENSES.md
 recursive-include models *
 recursive-include data *
 recursive-include docs *.tex *.bib *.md
 recursive-include docs/fig *.png
 recursive-include examples *.fasta
 recursive-include scripts *.py *.R
+recursive-include configs *.yaml

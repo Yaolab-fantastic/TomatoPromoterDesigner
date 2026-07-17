@@ -53,10 +53,10 @@ class MotifPreservingDesigner:
             designed = self._mutate(record.sequence, target_tissue, rng, protected)
             prediction = self.predictor.predict_one(SequenceRecord(record.sequence_id, designed))
             score_map = {
-                "root": prediction.expr_root,
-                "stem": prediction.expr_stem,
-                "leaf": prediction.expr_leaf,
-                "fruit": prediction.expr_fruit,
+                "root": prediction.score_root,
+                "stem": prediction.score_stem,
+                "leaf": prediction.score_leaf,
+                "fruit": prediction.score_fruit,
             }
             pool.append((score_map[target_tissue], designed, score_map))
 
@@ -74,10 +74,10 @@ class MotifPreservingDesigner:
                     candidate_rank=idx,
                     original_sequence=record.sequence,
                     designed_sequence=designed,
-                    expr_root=score_map["root"],
-                    expr_stem=score_map["stem"],
-                    expr_leaf=score_map["leaf"],
-                    expr_fruit=score_map["fruit"],
+                    score_root=score_map["root"],
+                    score_stem=score_map["stem"],
+                    score_leaf=score_map["leaf"],
+                    score_fruit=score_map["fruit"],
                     preserved_motifs=preserved_motifs,
                     design_status="baseline_motif_preserving",
                     num_mutations=num_mutations,

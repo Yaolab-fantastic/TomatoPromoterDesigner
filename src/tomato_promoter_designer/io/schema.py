@@ -32,10 +32,10 @@ class MotifHit:
 class PredictionResult:
     sequence_id: str
     sequence: str
-    expr_root: float
-    expr_stem: float
-    expr_leaf: float
-    expr_fruit: float
+    score_root: float
+    score_stem: float
+    score_leaf: float
+    score_fruit: float
     preferred_tissue: str
 
     def to_dict(self) -> dict[str, object]:
@@ -49,10 +49,10 @@ class DesignResult:
     candidate_rank: int
     original_sequence: str
     designed_sequence: str
-    expr_root: float
-    expr_stem: float
-    expr_leaf: float
-    expr_fruit: float
+    score_root: float
+    score_stem: float
+    score_leaf: float
+    score_fruit: float
     preserved_motifs: str
     design_status: str = ""
     num_mutations: int = 0

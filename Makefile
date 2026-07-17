@@ -1,6 +1,6 @@
 PYTHON ?= python
 
-.PHONY: install install-dev test demo validate package legacy-figures reproduce-legacy supplement-figures-r sync-data clean
+.PHONY: install install-dev test demo validate train-mpravae-smoke package model-figures legacy-figures reproduce-results reproduce-legacy supplement-figures-r sync-data clean
 
 install:
 	$(PYTHON) -m pip install -e .
@@ -17,11 +17,15 @@ demo:
 	PYTHONPATH=src $(PYTHON) -m tomato_promoter_designer.cli design --input examples/demo_input.fasta --target fruit --candidates 3 --seed 42 --output outputs/demo_design.csv
 	PYTHONPATH=src $(PYTHON) -m tomato_promoter_designer.cli report --input outputs/demo_design.csv --output outputs/demo_report.json
 
-legacy-figures:
-	PYTHONPATH=src $(PYTHON) -m tomato_promoter_designer.cli legacy-figures --output-dir outputs/legacy_figures_bundle
+model-figures:
+	PYTHONPATH=src $(PYTHON) -m tomato_promoter_designer.cli model-figures --output-dir outputs/model_figures_bundle
 
-reproduce-legacy:
+legacy-figures: model-figures
+
+reproduce-results:
 	PYTHONPATH=src $(PYTHON) scripts/reproduce_legacy_outputs.py
+
+reproduce-legacy: reproduce-results
 
 supplement-figures-r:
 	Rscript scripts/render_FigS1_quantitative_reference.R
@@ -35,6 +39,10 @@ sync-data:
 
 validate:
 	PYTHONPATH=src $(PYTHON) -m tomato_promoter_designer.cli validate-input --input examples/demo_input.fasta
+
+train-mpravae-smoke:
+	PYTHONPATH=src $(PYTHON) scripts/train_mpravae.py --config configs/training_mpravae.yaml --max-rows 8 --epochs 1 --output-checkpoint tmp/test_mpravae_train.pth --metrics-json tmp/test_mpravae_metrics.json
+	PYTHONPATH=src $(PYTHON) -m tomato_promoter_designer.cli predict-mpravae --input examples/demo_input.fasta --output tmp/test_mpravae_predict.csv --checkpoint tmp/test_mpravae_train.pth
 
 package:
 	$(PYTHON) -m build

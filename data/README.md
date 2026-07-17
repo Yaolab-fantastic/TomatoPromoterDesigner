@@ -1,23 +1,23 @@
 # Data Layout
 
-This repository keeps publication-facing data in four layers so the software package remains inspectable without forcing every large upstream artifact into git.
+This repository keeps publication-facing data in four layers so the software package remains inspectable without placing every large optional artifact in git.
 
 ## Directories
 
 - `raw/`
-  - small raw tables and image assets copied from the legacy `MpraVAE`, `deepseed`, and `DNABERT` workspaces
-  - enough to regenerate the bundled legacy figures and motif-processing outputs
+  - project input tables and support assets for MpraVAE, deepseed and DNABERT-derived processing
+  - enough to regenerate the retained manuscript figures and motif-processing outputs
 - `processed/`
   - intermediate outputs produced by migrated workflows
   - currently centered on the `DNABERT` motif post-processing tables
 - `results/`
   - repository-native outputs generated from the unified toolkit
-  - includes demo command outputs, modern SVG figures, and the reconstructed legacy figure bundle
+  - includes demo command outputs, SVG figures and retained manuscript result bundles
 - `external/`
   - manifests for large files intentionally left outside git
   - these remain candidates for Zenodo, release assets, or an optional download script
 - `../models/`
-  - bundled lightweight MpraVAE and deepseed checkpoints used by explicit legacy adapter commands
+  - bundled lightweight MpraVAE and deepseed checkpoints used by explicit model-backed commands
 
 ## Boundary with `outputs/`
 
@@ -34,7 +34,7 @@ The root-level `outputs/` directory serves a different purpose:
 Run:
 
 ```bash
-make reproduce-legacy
+make reproduce-results
 ```
 
 This command regenerates the retained result pack used by the Application Note figures and supplementary materials under `data/results/reproducible_legacy/`.
@@ -52,7 +52,7 @@ This script copies selected raw files into `data/raw`, refreshes processed table
 - `inventory.tsv`
   - machine-readable list of bundled data files and their provenance
 - `source_registry.tsv`
-  - higher-level registry of upstream origins, license evidence, and redistribution notes
+  - higher-level registry of project origins, license scope and redistribution notes
 - `summary.json`
   - compact count summary by stage
 - `external/external_resources.tsv`

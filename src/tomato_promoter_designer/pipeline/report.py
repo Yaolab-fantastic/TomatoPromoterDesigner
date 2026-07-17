@@ -31,13 +31,23 @@ def _coerce_bool(value: object) -> bool | None:
     return None
 
 
+def _score_column(row: dict[str, str], tissue: str) -> str:
+    score_key = f"score_{tissue}"
+    if score_key in row:
+        return score_key
+    expr_key = f"expr_{tissue}"
+    if expr_key in row:
+        return expr_key
+    raise KeyError(f"Missing score column for tissue: {tissue}")
+
+
 def _best_candidate_summary(row: dict[str, str]) -> dict[str, object]:
     target_tissue = row["target_tissue"]
-    target_score = float(row[f"expr_{target_tissue}"])
+    target_score = float(row[_score_column(row, target_tissue)])
     competing_scores = [
-        float(row[column])
-        for column in ("expr_root", "expr_stem", "expr_leaf", "expr_fruit")
-        if column != f"expr_{target_tissue}"
+        float(row[_score_column(row, tissue)])
+        for tissue in ("root", "stem", "leaf", "fruit")
+        if tissue != target_tissue
     ]
     runner_up_score = max(competing_scores) if competing_scores else target_score
     return {
@@ -56,11 +66,11 @@ def _best_candidate_summary(row: dict[str, str]) -> dict[str, object]:
 
 def _target_margin(row: dict[str, str]) -> float:
     target_tissue = row["target_tissue"]
-    target_score = float(row[f"expr_{target_tissue}"])
+    target_score = float(row[_score_column(row, target_tissue)])
     competing_scores = [
-        float(row[column])
-        for column in ("expr_root", "expr_stem", "expr_leaf", "expr_fruit")
-        if column != f"expr_{target_tissue}"
+        float(row[_score_column(row, tissue)])
+        for tissue in ("root", "stem", "leaf", "fruit")
+        if tissue != target_tissue
     ]
     return target_score - max(competing_scores) if competing_scores else target_score
 

@@ -1,5 +1,5 @@
 resource	required_for	bundled	default_location	availability_note
-Tomato reference genome	optional promoter extraction and upstream sequence reconstruction	no	external/tomato_reference_genome.fna	Distribute separately through release assets, Zenodo, or institutional storage if required.
-Synthetic promoter HDF5 corpus	legacy MpraVAE corpus inspection	no	external/mpravae_synthetic_sequences.h5	Not required for package-native annotate, predict, design, or report commands.
-BLAST database shards	legacy generated-sequence similarity checks	no	external/blast_database/	Not required for normal tool use; retain only for optional legacy-quality assessment.
-DNABERT fine-tuned checkpoint	DNABERT-derived motif post-processing	no	external/dnabert_checkpoint/	Use only when rerunning the original DNABERT-derived route beyond retained repository tables.
+Tomato reference genome	optional promoter extraction and upstream sequence reconstruction	no	external/tomato_reference_genome.fna	Obtain from the cited genome resource or a project archive; not required for normal package use.
+Synthetic promoter HDF5 corpus	full MpraVAE corpus inspection or retraining	no	external/mpravae_synthetic_sequences.h5	Not required for bundled prediction, design or demonstration commands.
+BLAST database shards	optional generated-sequence similarity checks	no	external/blast_database/	Not required for normal tool use.
+DNABERT fine-tuned checkpoint	rerunning DNABERT inference before motif post-processing	no	external/dnabert_checkpoint/	The bundled annotate-dnabert command consumes precomputed attention resources and does not require this checkpoint.

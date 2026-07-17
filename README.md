@@ -1,20 +1,33 @@
 # TomatoPromoterDesigner
 
-TomatoPromoterDesigner is a Python command-line framework for motif-aware analysis, tissue-associated prediction and candidate design of tomato promoters.
+TomatoPromoterDesigner is a Python command-line framework for motif-aware analysis, tissue-associated scoring and candidate design of tomato promoters.
 
 It provides a unified workflow for:
 
 - validating promoter FASTA inputs
-- annotating tomato promoter motifs
+- annotating a configured promoter motif set
 - reporting root, stem, leaf and fruit-associated heuristic scores
 - generating motif-aware candidate promoter sequences
 - exporting reports and figure-ready result summaries
-- running bundled legacy-derived checkpoint adapters explicitly when needed
+- running bundled model-backed routes explicitly when needed
 - reproducing retained manuscript-facing result resources
 
-TomatoPromoterDesigner is a software framework, not a newly trained promoter deep learning model. The repository contains package-native deterministic modules, documented legacy-derived adapters and retained result tables used for the accompanying Application Note.
+TomatoPromoterDesigner integrates package-native deterministic modules, bundled model-backed routes, preprocessing logic, design utilities and retained project result tables in one inspectable software framework for the accompanying Application Note.
 
 ## Installation
+
+Install a downloaded release wheel:
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+pip install tomato_promoter_designer-0.1.0-py3-none-any.whl
+```
+
+The release wheel contains the MpraVAE and deepseed checkpoints, their required
+model definitions, the default training configuration and the example input.
+
+For an editable installation from the repository root:
 
 ```bash
 python -m venv .venv
@@ -36,19 +49,22 @@ Run the bundled example workflow:
 ```bash
 mkdir -p outputs
 
+tomato-promoter-designer copy-example \
+  --output outputs/demo_input.fasta
+
 tomato-promoter-designer validate-input \
-  --input examples/demo_input.fasta
+  --input outputs/demo_input.fasta
 
 tomato-promoter-designer annotate \
-  --input examples/demo_input.fasta \
+  --input outputs/demo_input.fasta \
   --output outputs/demo_annotate.csv
 
 tomato-promoter-designer predict \
-  --input examples/demo_input.fasta \
+  --input outputs/demo_input.fasta \
   --output outputs/demo_predict.csv
 
 tomato-promoter-designer design \
-  --input examples/demo_input.fasta \
+  --input outputs/demo_input.fasta \
   --target fruit \
   --candidates 3 \
   --seed 42 \
@@ -131,14 +147,21 @@ If the input FASTA contains 100 promoters and `--candidates 5` is used, the desi
 | `start`, `end` | Zero-based motif coordinates |
 | `score` | Match score, equal to motif length for exact matching |
 
-`predict` writes a four-tissue prediction table:
+`predict` writes a four-tissue scoring table:
 
 | Field | Meaning |
 | --- | --- |
 | `sequence_id` | Input promoter identifier |
 | `sequence` | Normalized promoter sequence |
-| `expr_root`, `expr_stem`, `expr_leaf`, `expr_fruit` | Tissue-associated heuristic scores |
+| `score_root`, `score_stem`, `score_leaf`, `score_fruit` | Tissue-associated heuristic scores |
 | `preferred_tissue` | Tissue with the highest score |
+
+The model-backed prediction commands have route-specific outputs:
+
+| Command | Output definition |
+| --- | --- |
+| `predict-mpravae` | Four tissue model scores using the same `score_root`--`score_fruit` field names; values are not calibrated to the package-native heuristic scale |
+| `predict-deepseed` | `backend`, `predicted_log2_expression` and `predicted_linear_expression`; this route is scalar rather than tissue-specific |
 
 `design` writes a candidate table:
 
@@ -148,7 +171,7 @@ If the input FASTA contains 100 promoters and `--candidates 5` is used, the desi
 | `designed_sequence` | Designed candidate promoter sequence |
 | `target_tissue` | Requested target tissue |
 | `candidate_rank` | Rank within candidates for the same input promoter |
-| `expr_root`, `expr_stem`, `expr_leaf`, `expr_fruit` | Candidate tissue-associated heuristic scores |
+| `score_root`, `score_stem`, `score_leaf`, `score_fruit` | Candidate tissue-associated heuristic scores |
 | `preserved_motifs` | Motifs protected by the package-native design route |
 | `num_mutations` | Number of point differences from the input sequence |
 | `passes_qc` | Quality-control flag when available |
@@ -170,7 +193,7 @@ The small demo verifies installation and command behavior. Manuscript and supple
 Regenerate the retained manuscript-facing result pack:
 
 ```bash
-make reproduce-legacy
+make reproduce-results
 ```
 
 Outputs are written to:
@@ -178,6 +201,34 @@ Outputs are written to:
 ```text
 data/results/reproducible_legacy/
 ```
+
+## Train A Compatible MpraVAE Checkpoint
+
+The repository includes the MpraVAE model architecture, training dataset loader and a lightweight training entry point. This is provided so the model-backed route is not just a standalone `.pth` file.
+
+Run a fast smoke test:
+
+```bash
+make train-mpravae-smoke
+```
+
+Run the default training configuration:
+
+```bash
+PYTHONPATH=src python scripts/train_mpravae.py \
+  --config configs/training_mpravae.yaml
+```
+
+The generated checkpoint can be passed back into the model-backed commands:
+
+```bash
+tomato-promoter-designer predict-mpravae \
+  --input examples/demo_input.fasta \
+  --checkpoint models/mpravae/trained_mpravae_model.pth \
+  --output outputs/mpravae_predict.csv
+```
+
+Detailed training documentation is available in `docs/training.md`.
 
 ## Rebuild Supplementary Figures With R
 
@@ -192,7 +243,7 @@ install.packages(c("ggplot2", "readr", "dplyr", "pheatmap", "patchwork"))
 Run all supplementary figure scripts:
 
 ```bash
-make reproduce-legacy
+make reproduce-results
 make supplement-figures-r
 ```
 
@@ -218,17 +269,23 @@ Rscript scripts/render_FigS2_expression_heatmap.R \
 
 | Command | Purpose |
 | --- | --- |
+| `copy-example` | Copy the bundled demonstration FASTA to a user-selected path |
 | `validate-input` | Validate FASTA records and sequence symbols |
 | `annotate` | Scan promoter sequences for configured motif hits |
 | `predict` | Generate root, stem, leaf and fruit-associated scores |
 | `design` | Generate motif-aware candidate promoters |
 | `report` | Build a compact JSON design summary |
 | `figures` | Export lightweight figures from result CSV files |
-| `legacy-figures` | Reconstruct retained legacy-derived figure bundles |
-| `annotate-legacy-dnabert` | Run retained DNABERT-derived motif post-processing |
-| `predict-legacy-mpravae` | Run the bundled MpraVAE-derived four-tissue checkpoint adapter |
-| `design-legacy-mpravae` | Run the bundled MpraVAE-derived latent design checkpoint adapter |
-| `predict-legacy-deepseed` | Run the bundled deepseed-derived scalar-expression checkpoint adapter |
+| `model-figures` | Reconstruct retained project model figure bundles |
+| `annotate-dnabert` | Run project DNABERT-derived motif post-processing |
+| `predict-mpravae` | Run the bundled MpraVAE four-tissue checkpoint adapter |
+| `design-mpravae` | Run the bundled MpraVAE latent design checkpoint adapter |
+| `predict-deepseed` | Run the bundled deepseed scalar-scoring checkpoint adapter |
+
+`annotate-dnabert` does not run DNABERT inference from FASTA input. It converts
+precomputed DNABERT sequence and attention arrays into motif summaries. A
+fine-tuned DNABERT checkpoint is required only to regenerate those upstream
+attention arrays and is not included in the release wheel.
 
 ## Repository Layout
 
@@ -250,6 +307,7 @@ Detailed tool documentation:
 
 ```text
 docs/tool_documentation.md
+docs/training.md
 ```
 
 Manuscript sources:
@@ -262,7 +320,9 @@ docs/application_note_references.bib
 
 ## Data And Model Boundary
 
-Package-native commands run after installation and do not require model checkpoints. The current repository also bundles lightweight retained checkpoints for explicit legacy-derived routes:
+Package-native commands run after installation without loading a checkpoint.
+The repository and release wheel also bundle the lightweight MpraVAE and
+deepseed checkpoints required by their explicit model-backed routes:
 
 ```text
 models/mpravae/best_val_corr_model.pth
@@ -270,6 +330,12 @@ models/deepseed/165_mpra_expr_denselstm.pth
 models/deepseed/SeqRegressionModel.py
 models/weights_manifest.json
 ```
+
+The MpraVAE route includes compatible training code in this repository. The
+deepseed route includes its inference model definition and checkpoint, but not a
+separate training command. DNABERT support is a post-processing route for
+precomputed attention inputs. These three routes therefore have different
+reproduction boundaries.
 
 Large genomes, HDF5 corpora, BLAST databases and optional external resources are tracked through manifests rather than bundled into normal git history.
 
@@ -281,4 +347,7 @@ Citation metadata is provided in `CITATION.cff`. Please cite the Application Not
 
 ## License
 
-The package code is released under the license declared in `LICENSE` and `pyproject.toml`. Some retained data resources and legacy-derived assets have separate provenance or redistribution constraints documented in the repository data manifests.
+The package code is released under the MIT license declared in `LICENSE` and
+`pyproject.toml`. Project data, checkpoints, derived resources and third-party
+attribution boundaries are documented in `RESOURCE_LICENSES.md` and
+`data/source_registry.tsv`.

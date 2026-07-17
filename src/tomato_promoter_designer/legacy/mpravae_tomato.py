@@ -3,6 +3,7 @@ from __future__ import annotations
 import random
 import re
 import os
+import sysconfig
 from pathlib import Path
 
 import torch
@@ -28,6 +29,14 @@ def _default_models_dir() -> Path:
     repo_models = _repo_root() / "models"
     if repo_models.exists():
         return repo_models
+    installed_models = (
+        Path(sysconfig.get_path("data"))
+        / "share"
+        / "tomato-promoter-designer"
+        / "models"
+    )
+    if installed_models.exists():
+        return installed_models
     return Path.cwd() / "models"
 
 
@@ -49,7 +58,7 @@ def one_hot_encode(sequence: str) -> torch.Tensor:
     for base in sequence.upper():
         if base not in mapping:
             raise ValueError(
-                "Legacy MpraVAE adapter only supports unambiguous A/C/G/T input. "
+                "MpraVAE adapter only supports unambiguous A/C/G/T input. "
                 f"Found unsupported base {base!r}."
             )
         encoded.append(mapping[base])
@@ -276,10 +285,10 @@ class MpraVAETomatoAdapter:
         return PredictionResult(
             sequence_id=record.sequence_id,
             sequence=record.sequence,
-            expr_root=tissue_scores["root"],
-            expr_stem=tissue_scores["stem"],
-            expr_leaf=tissue_scores["leaf"],
-            expr_fruit=tissue_scores["fruit"],
+            score_root=tissue_scores["root"],
+            score_stem=tissue_scores["stem"],
+            score_leaf=tissue_scores["leaf"],
+            score_fruit=tissue_scores["fruit"],
             preferred_tissue=preferred_tissue,
         )
 
@@ -400,10 +409,10 @@ class MpraVAETomatoAdapter:
             )
             prediction = self._predict_one(SequenceRecord(record.sequence_id, designed_sequence))
             score_map = {
-                "root": prediction.expr_root,
-                "stem": prediction.expr_stem,
-                "leaf": prediction.expr_leaf,
-                "fruit": prediction.expr_fruit,
+                "root": prediction.score_root,
+                "stem": prediction.score_stem,
+                "leaf": prediction.score_leaf,
+                "fruit": prediction.score_fruit,
             }
             ranking_score = score_map[target_tissue] - max(
                 score_map[tissue] for tissue in TISSUE_ORDER if tissue != target_tissue
@@ -414,10 +423,10 @@ class MpraVAETomatoAdapter:
                 candidate_rank=attempt_index,
                 original_sequence=record.sequence,
                 designed_sequence=designed_sequence,
-                expr_root=score_map["root"],
-                expr_stem=score_map["stem"],
-                expr_leaf=score_map["leaf"],
-                expr_fruit=score_map["fruit"],
+                score_root=score_map["root"],
+                score_stem=score_map["stem"],
+                score_leaf=score_map["leaf"],
+                score_fruit=score_map["fruit"],
                 preserved_motifs="not_tracked",
                 design_status=design_status,
                 num_mutations=count_point_mutations(record.sequence, designed_sequence),
@@ -447,10 +456,10 @@ class MpraVAETomatoAdapter:
                     candidate_rank=output_rank,
                     original_sequence=design.original_sequence,
                     designed_sequence=design.designed_sequence,
-                    expr_root=design.expr_root,
-                    expr_stem=design.expr_stem,
-                    expr_leaf=design.expr_leaf,
-                    expr_fruit=design.expr_fruit,
+                    score_root=design.score_root,
+                    score_stem=design.score_stem,
+                    score_leaf=design.score_leaf,
+                    score_fruit=design.score_fruit,
                     preserved_motifs=design.preserved_motifs,
                     design_status=design.design_status,
                     num_mutations=design.num_mutations,

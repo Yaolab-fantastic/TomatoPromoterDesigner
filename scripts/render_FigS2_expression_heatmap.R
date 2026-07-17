@@ -1,4 +1,4 @@
-# Rebuild Supplementary Figure S2: retained tissue-associated expression heatmap.
+# Rebuild Supplementary Figure S2: retained tissue-associated training targets.
 
 library(readr)
 library(dplyr)
@@ -30,7 +30,7 @@ df_order <- df %>%
   mutate(promoter_index = row_number())
 
 heatmap_matrix <- df_order %>%
-  select(expr_root, expr_stem, expr_leaf, expr_fruit) %>%
+  select(score_root, score_stem, score_leaf, score_fruit) %>%
   as.matrix()
 
 rownames(heatmap_matrix) <- as.character(df_order$promoter_index)
@@ -54,7 +54,7 @@ heatmap_plot <- pheatmap(
   fontsize_col = 12,
   angle_col = 0,
   legend = TRUE,
-  main = "Retained tissue-associated expression profiles",
+  main = "Retained tissue-associated training targets",
   silent = TRUE
 )
 

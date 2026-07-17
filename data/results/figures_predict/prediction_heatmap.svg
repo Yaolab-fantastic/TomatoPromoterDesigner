@@ -1,7 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="880" height="268" viewBox="0 0 880 268" role="img">
 <rect width="100%" height="100%" fill="#fcfbf7"/>
-<text x="40" y="42" font-size="24" font-family="Arial, sans-serif" fill="#1d2a2f">Predicted Tissue Activity Heatmap</text>
-<text x="40" y="66" font-size="12" font-family="Arial, sans-serif" fill="#5b666b">Generated from prediction results for package reports and manuscript figures.</text>
+<text x="40" y="42" font-size="24" font-family="Arial, sans-serif" fill="#1d2a2f">Tissue-associated Score Heatmap</text>
+<text x="40" y="66" font-size="12" font-family="Arial, sans-serif" fill="#5b666b">Generated from tissue-score results for package reports and manuscript figures.</text>
 <text x="275.0" y="74" text-anchor="middle" font-size="13" font-family="Arial, sans-serif" fill="#33454d">root</text>
 <text x="405.0" y="74" text-anchor="middle" font-size="13" font-family="Arial, sans-serif" fill="#33454d">stem</text>
 <text x="535.0" y="74" text-anchor="middle" font-size="13" font-family="Arial, sans-serif" fill="#33454d">leaf</text>
