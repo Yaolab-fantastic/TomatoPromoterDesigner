@@ -24,7 +24,7 @@ source .venv/bin/activate
 pip install tomato_promoter_designer-0.1.0-py3-none-any.whl
 ```
 
-The release wheel contains the MpraVAE and deepseed checkpoints, their required
+The release wheel contains the MpraVAE and DeepSEED checkpoints, their required
 model definitions, the default training configuration and the example input.
 
 For an editable installation from the repository root:
@@ -156,7 +156,7 @@ If the input FASTA contains 100 promoters and `--candidates 5` is used, the desi
 | `score_root`, `score_stem`, `score_leaf`, `score_fruit` | Tissue-associated heuristic scores |
 | `preferred_tissue` | Tissue with the highest score |
 
-The model-backed prediction commands have route-specific outputs:
+The model-backed scoring commands have route-specific outputs:
 
 | Command | Output definition |
 | --- | --- |
@@ -280,7 +280,7 @@ Rscript scripts/render_FigS2_expression_heatmap.R \
 | `annotate-dnabert` | Run project DNABERT-derived motif post-processing |
 | `predict-mpravae` | Run the bundled MpraVAE four-tissue checkpoint adapter |
 | `design-mpravae` | Run the bundled MpraVAE latent design checkpoint adapter |
-| `predict-deepseed` | Run the bundled deepseed scalar-scoring checkpoint adapter |
+| `predict-deepseed` | Run the bundled DeepSEED scalar-scoring checkpoint adapter |
 
 `annotate-dnabert` does not run DNABERT inference from FASTA input. It converts
 precomputed DNABERT sequence and attention arrays into motif summaries. A
@@ -322,7 +322,7 @@ docs/application_note_references.bib
 
 Package-native commands run after installation without loading a checkpoint.
 The repository and release wheel also bundle the lightweight MpraVAE and
-deepseed checkpoints required by their explicit model-backed routes:
+DeepSEED checkpoints required by their explicit model-backed routes:
 
 ```text
 models/mpravae/best_val_corr_model.pth
@@ -332,7 +332,7 @@ models/weights_manifest.json
 ```
 
 The MpraVAE route includes compatible training code in this repository. The
-deepseed route includes its inference model definition and checkpoint, but not a
+DeepSEED route includes its inference model definition and checkpoint, but not a
 separate training command. DNABERT support is a post-processing route for
 precomputed attention inputs. These three routes therefore have different
 reproduction boundaries.

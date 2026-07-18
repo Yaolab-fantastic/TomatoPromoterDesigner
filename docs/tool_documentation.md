@@ -16,9 +16,9 @@ TomatoPromoterDesigner supports five core tasks:
 | Motif-aware design | Generate candidate promoters for a target tissue | `design` |
 | Reporting and figures | Summarize outputs and export simple figures | `report`, `figures` |
 
-The current release also includes a project-trained MpraVAE model adapter, a deepseed-derived scalar inference adapter and DNABERT-derived motif post-processing. The lightweight MpraVAE and deepseed checkpoints required by the explicit model-backed commands are bundled under `models/` and in the release wheel. DNABERT-derived motif post-processing consumes precomputed tabular and attention resources; it does not run DNABERT inference from FASTA input.
+The current release also includes a project-trained MpraVAE model adapter, a DeepSEED-derived scalar inference adapter and DNABERT-derived motif post-processing. The lightweight MpraVAE and DeepSEED checkpoints required by the explicit model-backed commands are bundled under `models/` and in the release wheel. DNABERT-derived motif post-processing consumes precomputed tabular and attention resources; it does not run DNABERT inference from FASTA input.
 
-The repository also includes an MpraVAE training entry point (`scripts/train_mpravae.py`), a default training configuration (`configs/training_mpravae.yaml`) and training documentation (`docs/training.md`). This means the MpraVAE route includes model architecture, training logic, bundled checkpoint loading and downstream prediction/design commands.
+The repository also includes an MpraVAE training entry point (`scripts/train_mpravae.py`), a default training configuration (`configs/training_mpravae.yaml`) and training documentation (`docs/training.md`). This means the MpraVAE route includes model architecture, training logic, bundled checkpoint loading and downstream scoring/design commands.
 
 ## 2. Release Boundary
 
@@ -27,7 +27,7 @@ The package has three layers:
 | Layer | Meaning | Availability |
 | --- | --- | --- |
 | Package-native modules | Deterministic modules implemented directly in the package | Always runnable after installation |
-| Model-backed routes | Explicit checkpoint or precomputed-attention routes integrated by the project | MpraVAE and deepseed inference checkpoints are bundled; DNABERT post-processing inputs are repository resources |
+| Model-backed routes | Explicit checkpoint or precomputed-attention routes integrated by the project | MpraVAE and DeepSEED inference checkpoints are bundled; DNABERT post-processing inputs are repository resources |
 | Retained result resources | Curated project tables and regenerated results used for manuscript figures | Distributed as repository data resources |
 
 Together, these layers provide a reproducible framework that integrates project training code, model resources, preprocessing logic and design utilities while retaining route-specific output definitions.
@@ -193,9 +193,9 @@ CAAAA, CTATT, ATTTT, TTAAA, TTTAT
 
 Overlapping motif occurrences are reported. Coordinates are zero-based.
 
-### Baseline Predictor
+### Operational Scoring Module
 
-The package-native predictor is deterministic. It combines GC ratio, AT ratio, poly-A content and motif counts into root, stem, leaf and fruit scores. It is included so the software remains installable and testable without external checkpoints.
+The package-native scorer is deterministic. It combines GC ratio, AT ratio, poly-A content and motif counts into root, stem, leaf and fruit scores. It is included so the software remains installable and testable without external checkpoints.
 
 ### Motif-Aware Designer
 
@@ -222,7 +222,7 @@ These commands expose checkpoint-backed or model-derived routes developed within
 | `annotate-dnabert` | Run DNABERT-derived attention-to-motif post-processing |
 | `predict-mpravae` | Run the bundled MpraVAE four-tissue checkpoint adapter |
 | `design-mpravae` | Run the bundled MpraVAE latent-space design checkpoint adapter |
-| `predict-deepseed` | Run the bundled deepseed scalar-scoring checkpoint adapter |
+| `predict-deepseed` | Run the bundled DeepSEED scalar-scoring checkpoint adapter |
 | `model-figures` | Reconstruct retained project model figure bundles |
 
 Example:
@@ -238,7 +238,7 @@ The two DNABERT inputs in this example are precomputed resources. Regenerating
 `atten.npy` from raw FASTA requires a separately supplied fine-tuned DNABERT
 checkpoint and is outside the `annotate-dnabert` post-processing command.
 
-Package-native `predict` and `design` remain deterministic and do not use these checkpoints unless an explicit model adapter command is called. The old command names containing `legacy` are retained only as backward-compatible aliases for existing scripts.
+Package-native `predict` and `design` remain deterministic and do not use these checkpoints unless an explicit model adapter command is called. Older command aliases are retained only for backward compatibility with existing scripts.
 
 ## 9. Reproducing Application Note Results
 
@@ -337,11 +337,11 @@ Bundled data layers:
 | `data/results/demo/` | Package-native demo outputs |
 | `data/results/reproducible_legacy/` | Retained manuscript-facing project result pack |
 | `data/external/` | Manifests for large files not bundled by default |
-| `models/` | Bundled lightweight MpraVAE and deepseed checkpoints plus checksum manifest |
+| `models/` | Bundled lightweight MpraVAE and DeepSEED checkpoints plus checksum manifest |
 
 The lightweight checkpoints used by the CLI model adapters are bundled in
 `models/` and packaged into the release wheel. The MpraVAE route includes a
-compatible training entry point; deepseed includes checkpoint-backed inference
+compatible training entry point; DeepSEED includes checkpoint-backed inference
 and its required model definition; DNABERT support begins from precomputed
 attention inputs. Large genomes, HDF5 corpora, BLAST databases and optional
 external resources are not bundled into normal git history.
@@ -405,7 +405,7 @@ The test suite covers:
 - CSV output
 - CLI behavior
 - motif annotation
-- package-native prediction and design
+- package-native scoring and design
 - report generation
 - project model adapter behavior
 - figure export utilities
