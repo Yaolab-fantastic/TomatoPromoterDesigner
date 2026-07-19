@@ -195,7 +195,7 @@ Overlapping motif occurrences are reported. Coordinates are zero-based.
 
 ### Operational Scoring Module
 
-The package-native scorer is deterministic. It combines GC ratio, AT ratio, poly-A content and motif counts into root, stem, leaf and fruit scores. It is included so the software remains installable and testable without external checkpoints.
+The package-native scorer is deterministic. It combines GC ratio, AT ratio, poly-A content and motif counts into root, stem, leaf and fruit scores. These terms use transparent sequence features available after installation, and the coefficients are fixed software defaults for route-internal ranking rather than fitted expression-model parameters or biological effect sizes. This scorer is included so the software remains installable and testable without external checkpoints.
 
 ### Motif-Aware Designer
 
@@ -206,6 +206,11 @@ The package-native designer:
 3. applies seeded substitutions to non-protected positions
 4. scores candidate sequences
 5. ranks candidates by the requested target-tissue score
+
+The default mutation rate is 0.18 per non-protected position. Target-tissue
+nucleotide preferences are fixed software defaults used to generate candidate
+diversity for route-internal ranking; they are not optimized biological design
+parameters.
 
 The default seed is:
 
